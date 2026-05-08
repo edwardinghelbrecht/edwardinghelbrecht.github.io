@@ -1820,7 +1820,13 @@
             MIN_LAYOUT_SCALE,
             Math.min(MAX_LAYOUT_SCALE, rawScale),
           );
-          rootEl?.style.setProperty("--layout-scale", scale.toFixed(3));
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+          const dprScale = dpr >= 2.5 ? 0.88 : dpr >= 2 ? 0.92 : 1;
+          const adjustedScale = Math.max(
+            MIN_LAYOUT_SCALE,
+            Math.min(MAX_LAYOUT_SCALE, scale * dprScale),
+          );
+          rootEl?.style.setProperty("--layout-scale", adjustedScale.toFixed(3));
         }
 
         async function requestFullscreenSafe() {
