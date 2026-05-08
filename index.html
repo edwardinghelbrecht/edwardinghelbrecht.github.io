@@ -192,32 +192,32 @@
       /* Layout grids for cards */
       #liveUitslagenRoot .grid-col-upcoming {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 2.45em;
-        column-gap: 0.22em;
+        grid-template-columns: minmax(0, 1fr) 45px;
+        column-gap: 4px;
       }
       #liveUitslagenRoot .grid-col-next {
         display: grid;
-        grid-template-columns: 2.6em minmax(0, 1fr);
-        column-gap: 0.22em;
+        grid-template-columns: 48px minmax(0, 1fr);
+        column-gap: 4px;
       }
       #liveUitslagenRoot .grid-col-single-empty {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 1.5em;
-        column-gap: 0.05em;
+        grid-template-columns: minmax(0, 1fr) 28px;
+        column-gap: 1px;
       }
       #liveUitslagenRoot .grid-col-single {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 1.2em;
+        grid-template-columns: minmax(0, 1fr) 22px;
         column-gap: 0;
       }
       #liveUitslagenRoot .grid-col-player-stats {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 1.3em 1.4em;
+        grid-template-columns: minmax(0, 1fr) 24px 26px;
         column-gap: 0;
       }
       #liveUitslagenRoot .grid-col-player-basic {
         display: grid;
-        grid-template-columns: 1fr 1.3em;
+        grid-template-columns: 1fr 24px;
         column-gap: 0;
       }
       #liveUitslagenRoot .grid-row-summary {
@@ -227,17 +227,15 @@
       }
       #liveUitslagenRoot .grid-col-summary-top {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 3em;
-        column-gap: 0.22em;
+        grid-template-columns: minmax(0, 1fr) 55px;
+        column-gap: 4px;
         align-items: center;
       }
       #liveUitslagenRoot .grid-col-ranking {
         display: grid;
-        grid-template-columns:
-          1.5em minmax(0, 1fr)
-          1.2em 1.2em 1.2em 1.2em 1.6em;
+        grid-template-columns: 28px minmax(0, 1fr) 22px 22px 22px 22px 30px;
         align-items: center;
-        column-gap: 0.05em;
+        column-gap: 1px;
       }
       #liveUitslagenRoot .grid-col-ranking > span:first-child {
         padding-right: 4px;
@@ -1244,9 +1242,10 @@
               activeUntil > Date.now() ? "color-highlight fw-bold" : "";
             return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted">0-0</span></div>`;
           }).join("");
+          const emptySingleRowsWrapped = `<div style="display:grid;grid-template-rows:repeat(16,1fr);height:100%;width:100%;">${emptySingleRows}</div>`;
 
           if (!match) {
-            target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${emptySingleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom color-muted" style="font-size:${rightFontSize};line-height:1.2;">Geen huidige match</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
+            target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${emptySingleRowsWrapped}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom color-muted" style="font-size:${rightFontSize};line-height:1.2;">Geen huidige match</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
             return;
           }
 
@@ -1344,7 +1343,7 @@
 
           const currentSummary = `<div class="grid-row-summary"><div class="grid-col-summary-top"><div class="fw-bold text-ellipsis" style="font-size:1.30em;">${title}</div><div class="text-right fw-bold tabular-nums ws-nowrap" style="font-size:1.3em;">${totalScore}</div></div><div>${playerRows}</div></div>`;
 
-          target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${singleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
+          target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;"><div style="display:grid;grid-template-rows:repeat(16,1fr);height:100%;width:100%;">${singleRows}</div></div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
         }
 
         function renderRankingInBlock(
