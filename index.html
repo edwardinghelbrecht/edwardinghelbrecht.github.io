@@ -1,16 +1,1910 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Departement</title>
-    <link rel="stylesheet" href="../css/test.css">
-</head>
-<body>
-    <h1>Departement IT en Digitale Inn</h1>
-    <h2>test</h2>
-    <h3>goeiemiddag</h3>
-    <p>sjfkmfqsfkmkfjj</p>
-    <p>sdgs</p>
-</body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #liveUitslagenRoot {
+        --base-font-px: 18.4;
+        --layout-scale: 1;
+      }
+
+      #liveUitslagenRoot {
+        font-size: calc(var(--base-font-px) * var(--layout-scale) * 1px);
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        box-sizing: border-box;
+        position: relative;
+      }
+
+      #liveUitslagenRoot .grid-container {
+        display: grid;
+        /* Een raster van 30 kolommen, we berekenen de blokken om over deze kolommen heen te spannen (KGV van 5 en 6 is 30) */
+        grid-template-columns: repeat(30, 1fr);
+        grid-template-rows: 23% 27% 23% 27%;
+        gap: 1px; /* Dunne lijnen tussen de blokken */
+        background-color: #ccc; /* Kleur van de lijnen */
+        width: 100%;
+        height: 100%;
+        padding: 1px; /* Rand buitenkant */
+        box-sizing: border-box;
+      }
+
+      #liveUitslagenRoot .grid-item {
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        font-size: 1.5em;
+        color: #333;
+        overflow: hidden;
+      }
+
+      #liveUitslagenRoot .grid-item,
+      #liveUitslagenRoot .grid-item * {
+        min-width: 0;
+      }
+
+      #liveUitslagenRoot .major-divider {
+        border-right: 2px solid #b5b5b5;
+      }
+
+      #liveUitslagenRoot .middle-divider {
+        border-bottom: 2px solid #b5b5b5;
+      }
+
+      #liveUitslagenRoot .unused-layout {
+        display: grid;
+        grid-template-columns: 35% 65%;
+        width: 100%;
+        height: 100%;
+      }
+
+      #liveUitslagenRoot .unused-left {
+        border-right: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05em;
+        color: #666;
+      }
+
+      #liveUitslagenRoot .unused-left-content {
+        display: block;
+        align-items: initial;
+        justify-content: initial;
+      }
+
+      #liveUitslagenRoot .unused-right {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+      }
+
+      #liveUitslagenRoot .unused-right-top {
+        border-bottom: 1px solid #ddd;
+      }
+
+      /* Rij 1 en 2 hebben 5 kolommen (10 blokken totaal). 30 / 5 = elk blok spant over 6 raster-kolommen */
+      #liveUitslagenRoot .row-5-col {
+        grid-column: span 6;
+      }
+
+      /* Rij 3 en 4 hebben 6 kolommen (12 blokken totaal). 30 / 6 = elk blok spant over 5 raster-kolommen */
+      #liveUitslagenRoot .row-6-col {
+        grid-column: span 5;
+      }
+
+      #liveUitslagenRoot .control-buttons {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        display: flex;
+        gap: 8px;
+        z-index: 9999;
+      }
+
+      #liveUitslagenRoot .control-btn {
+        width: 44px;
+        height: 44px;
+        background-color: rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        text-decoration: none;
+      }
+
+      #liveUitslagenRoot .control-btn:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      #liveUitslagenRoot .control-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+      }
+
+      /* Utility classes for string templates */
+      #liveUitslagenRoot .text-left {
+        text-align: left;
+      }
+      #liveUitslagenRoot .text-right {
+        text-align: right;
+      }
+      #liveUitslagenRoot .text-center {
+        text-align: center;
+      }
+      #liveUitslagenRoot .text-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #liveUitslagenRoot .tabular-nums {
+        font-variant-numeric: tabular-nums;
+      }
+      #liveUitslagenRoot .fw-bold {
+        font-weight: 700;
+      }
+      #liveUitslagenRoot .color-zandvoorde {
+        color: #c00000;
+      }
+      #liveUitslagenRoot .color-highlight {
+        color: #0a8f2e;
+      }
+      #liveUitslagenRoot .color-muted {
+        color: #777;
+      }
+      #liveUitslagenRoot .border-bottom-light {
+        border-bottom: 1px solid #f1f1f1;
+      }
+      #liveUitslagenRoot .border-bottom {
+        border-bottom: 1px solid #ddd;
+      }
+      #liveUitslagenRoot .border-bottom-eee {
+        border-bottom: 1px solid #eee;
+      }
+      #liveUitslagenRoot .p-0 {
+        padding: 0;
+      }
+      #liveUitslagenRoot .p-4 {
+        padding: 4px;
+        box-sizing: border-box;
+      }
+      #liveUitslagenRoot .py-1 {
+        padding: 1px 0;
+      }
+      #liveUitslagenRoot .pt-4 {
+        padding-top: 4px;
+      }
+      #liveUitslagenRoot .ws-nowrap {
+        white-space: nowrap;
+      }
+
+      /* Layout grids for cards */
+      #liveUitslagenRoot .grid-col-upcoming {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 2.45em;
+        column-gap: 0.22em;
+      }
+      #liveUitslagenRoot .grid-col-next {
+        display: grid;
+        grid-template-columns: 2.6em minmax(0, 1fr);
+        column-gap: 0.22em;
+      }
+      #liveUitslagenRoot .grid-col-single-empty {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 1.5em;
+        column-gap: 0.05em;
+      }
+      #liveUitslagenRoot .grid-col-single {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 1.2em;
+        column-gap: 0;
+      }
+      #liveUitslagenRoot .grid-col-player-stats {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 1.3em 1.4em;
+        column-gap: 0;
+      }
+      #liveUitslagenRoot .grid-col-player-basic {
+        display: grid;
+        grid-template-columns: 1fr 1.3em;
+        column-gap: 0;
+      }
+      #liveUitslagenRoot .grid-row-summary {
+        display: grid;
+        grid-template-rows: auto auto;
+        row-gap: 2px;
+      }
+      #liveUitslagenRoot .grid-col-summary-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 3em;
+        column-gap: 0.22em;
+        align-items: center;
+      }
+      #liveUitslagenRoot .grid-col-ranking {
+        display: grid;
+        grid-template-columns:
+          1.5em minmax(0, 1fr)
+          1.2em 1.2em 1.2em 1.2em 1.6em;
+        align-items: center;
+        column-gap: 0.05em;
+      }
+      #liveUitslagenRoot .grid-col-ranking > span:first-child {
+        padding-right: 4px;
+      }
+      #liveUitslagenRoot .scroll-block {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 4px;
+      }
+      #liveUitslagenRoot .scroll-y-block {
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 4px;
+      }
+      #liveUitslagenRoot .grid-unused-right-layout {
+        display: grid;
+        grid-template-rows: minmax(0, 1.15fr) minmax(0, 1.2fr) minmax(0, 0.65fr);
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="liveUitslagenRoot">
+      <div class="grid-container" id="gridContainer">
+        <!-- Row 1 (5 kolommen) -->
+        <div class="grid-item row-5-col major-divider">1</div>
+        <div class="grid-item row-5-col major-divider">2</div>
+        <div class="grid-item row-5-col major-divider">3</div>
+        <div class="grid-item row-5-col major-divider">4</div>
+        <div class="grid-item row-5-col">5</div>
+
+        <!-- Row 2 (5 kolommen) -->
+        <div class="grid-item row-5-col major-divider middle-divider">6</div>
+        <div class="grid-item row-5-col major-divider middle-divider">7</div>
+        <div class="grid-item row-5-col major-divider middle-divider">8</div>
+        <div class="grid-item row-5-col major-divider middle-divider">9</div>
+        <div class="grid-item row-5-col middle-divider">10</div>
+
+        <!-- Row 3 (6 kolommen) -->
+        <div class="grid-item row-6-col major-divider">11</div>
+        <div class="grid-item row-6-col major-divider">12</div>
+        <div class="grid-item row-6-col major-divider">13</div>
+        <div class="grid-item row-6-col major-divider">14</div>
+        <div class="grid-item row-6-col major-divider">15</div>
+        <div class="grid-item row-6-col">16</div>
+
+        <!-- Row 4 (6 kolommen) -->
+        <div class="grid-item row-6-col major-divider">17</div>
+        <div class="grid-item row-6-col major-divider">18</div>
+        <div class="grid-item row-6-col major-divider">19</div>
+        <div class="grid-item row-6-col major-divider">20</div>
+        <div class="grid-item row-6-col major-divider">21</div>
+        <div class="grid-item row-6-col">22</div>
+      </div>
+
+      <script>
+        const SOAP_ENDPOINT = "https://api.vttl.be/index.php?s=vttl";
+        const SHOW_PLACEHOLDERS = false;
+        let hasInitializedGrid = false;
+        const GRID_CACHE_KEY = "vttl-grid-snapshot-v1";
+        const STANDINGS_HIGHLIGHT_KEY = "vttl-standings-highlight-v1";
+        const MATCHES_POLL_INTERVAL_MS = 10 * 1000;
+        const TEAM_CACHE_MS = 60 * 60 * 1000;
+        const MATCH_FETCH_DAYS_BACK = 5;
+        const MATCH_FETCH_DAYS_FORWARD = 56;
+        const HOURLY_REFRESH_MS = 60 * 60 * 1000;
+        const LATE_NIGHT_REFRESH_MS = 60 * 1000;
+        const SINGLES_HIGHLIGHT_MS = 2 * 60 * 1000;
+        const EXPECTED_RANKING_TEAMS = 12;
+
+        const TEAM_BLOCK_MAP = {
+          A: { ranking: 1, matches: 6 },
+          B: { ranking: 2, matches: 7 },
+          C: { ranking: 3, matches: 8 },
+          D: { ranking: 4, matches: 9 },
+          E: { ranking: 5, matches: 10 },
+          F: { ranking: 11, matches: 17 },
+          G: { ranking: 12, matches: 18 },
+          H: { ranking: 13, matches: 19 },
+          I: { ranking: 14, matches: 20 },
+          J: { ranking: 15, matches: 21 },
+          K: { ranking: 16, matches: 22 },
+        };
+
+        let standingsRefreshInProgress = false;
+        let matchesRefreshInProgress = false;
+        let standingsRefreshTimeoutId = null;
+        let matchesRefreshIntervalId = null;
+        let cachedClubTeams = null;
+        let cachedClubTeamsFetchedAt = 0;
+        let previousStandingsByLetter = {};
+        let previousSinglesByLetter = {};
+        let singlesHighlightUntil = {};
+        let standingsHighlightByLetter = {};
+
+        function getRefreshIntervalMs() {
+          const hour = new Date().getHours();
+          return hour >= 23 ? LATE_NIGHT_REFRESH_MS : HOURLY_REFRESH_MS;
+        }
+
+        function getUsedBlocksFromMap(blockMap) {
+          const usedBlocks = new Set();
+          for (const cfg of Object.values(blockMap)) {
+            usedBlocks.add(cfg.ranking);
+            usedBlocks.add(cfg.matches);
+          }
+          return usedBlocks;
+        }
+
+        function ensureGridInitialized(blockMap) {
+          if (!hasInitializedGrid) {
+            resetGridPlaceholders(getUsedBlocksFromMap(blockMap));
+            hasInitializedGrid = true;
+          }
+        }
+
+        function getTodayKey() {
+          const now = new Date();
+          const y = now.getFullYear();
+          const m = String(now.getMonth() + 1).padStart(2, "0");
+          const d = String(now.getDate()).padStart(2, "0");
+          return `${y}-${m}-${d}`;
+        }
+
+        function loadStandingsHighlightState() {
+          try {
+            const raw = localStorage.getItem(STANDINGS_HIGHLIGHT_KEY);
+            if (!raw) {
+              standingsHighlightByLetter = {};
+              return;
+            }
+
+            const parsed = JSON.parse(raw);
+            const today = getTodayKey();
+            standingsHighlightByLetter =
+              parsed?.date === today ? parsed.highlights || {} : {};
+          } catch {
+            standingsHighlightByLetter = {};
+          }
+        }
+
+        function saveStandingsHighlightState() {
+          try {
+            localStorage.setItem(
+              STANDINGS_HIGHLIGHT_KEY,
+              JSON.stringify({
+                date: getTodayKey(),
+                highlights: standingsHighlightByLetter,
+              }),
+            );
+          } catch {
+            // ignore persistence errors
+          }
+        }
+
+        const rootEl = document.getElementById("liveUitslagenRoot");
+
+        function getGridElement() {
+          return rootEl?.querySelector("#gridContainer") || null;
+        }
+
+        function getGridItems() {
+          return rootEl?.querySelectorAll(".grid-item") || [];
+        }
+
+        function applyCachedGridSnapshot() {
+          try {
+            const cached = localStorage.getItem(GRID_CACHE_KEY);
+            if (!cached) {
+              return;
+            }
+
+            const grid = getGridElement();
+            if (!grid) {
+              return;
+            }
+
+            grid.innerHTML = cached;
+            hasInitializedGrid = true;
+          } catch (error) {
+            console.warn("Could not apply cached grid snapshot:", error);
+          }
+        }
+
+        function saveGridSnapshot() {
+          try {
+            const grid = getGridElement();
+            if (!grid) {
+              return;
+            }
+
+            localStorage.setItem(GRID_CACHE_KEY, grid.innerHTML);
+          } catch (error) {
+            console.warn("Could not save grid snapshot:", error);
+          }
+        }
+
+        function getElementsByLocalName(root, localName) {
+          return Array.from(root.getElementsByTagName("*")).filter(
+            (node) => node.localName === localName,
+          );
+        }
+
+        function getDirectChildText(element, tagName, fallback = "") {
+          const directChild = Array.from(element.children).find(
+            (child) => child.localName === tagName,
+          );
+
+          if (directChild?.textContent) {
+            return directChild.textContent.trim();
+          }
+
+          const descendant = getElementsByLocalName(element, tagName)[0];
+          return descendant?.textContent?.trim() || fallback;
+        }
+
+        async function callSoap(action, bodyXml) {
+          const envelope = `<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://api.frenoy.net/TabTAPI">
+  <soap:Body>
+    ${bodyXml}
+  </soap:Body>
+</soap:Envelope>`;
+
+          const response = await fetch(SOAP_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/xml; charset=utf-8",
+              SOAPAction: action,
+            },
+            body: envelope,
+          });
+
+          if (!response.ok) {
+            throw new Error(`SOAP ${action} failed: ${response.status}`);
+          }
+
+          return response.text();
+        }
+
+        async function fetchTeamsForClub(club) {
+          const xmlText = await callSoap(
+            "GetClubTeams",
+            `<tns:GetClubTeamsRequest><tns:Club>${club}</tns:Club></tns:GetClubTeamsRequest>`,
+          );
+
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+          const teamEntries = getElementsByLocalName(xmlDoc, "TeamEntries");
+          const teams = [];
+
+          for (const entry of teamEntries) {
+            teams.push({
+              teamId: getDirectChildText(entry, "TeamId"),
+              teamName: getDirectChildText(entry, "Team"),
+              divisionId: getDirectChildText(entry, "DivisionId"),
+              divisionCategory: getDirectChildText(entry, "DivisionCategory"),
+              divisionName: getDirectChildText(entry, "DivisionName"),
+            });
+          }
+
+          return teams;
+        }
+
+        async function fetchDivisionRanking(divisionId) {
+          const xmlText = await callSoap(
+            "GetDivisionRanking",
+            `<tns:GetDivisionRankingRequest><tns:DivisionId>${divisionId}</tns:DivisionId></tns:GetDivisionRankingRequest>`,
+          );
+
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+          const rankingEntries = getElementsByLocalName(
+            xmlDoc,
+            "RankingEntries",
+          );
+          const ranking = [];
+
+          for (const entry of rankingEntries) {
+            ranking.push({
+              teamName: getDirectChildText(entry, "Team"),
+              gw: getDirectChildText(entry, "GamesWon", "0"),
+              vw: getDirectChildText(entry, "GamesLost", "0"),
+              dw: getDirectChildText(entry, "GamesDraw", "0"),
+              ff: getDirectChildText(entry, "GamesWO", "0"),
+              points: getDirectChildText(entry, "Points", "0"),
+            });
+          }
+
+          return ranking;
+        }
+
+        async function fetchDivisionMatches(
+          divisionId,
+          withDetails = false,
+          dateFrom,
+          dateTo,
+        ) {
+          const yearDateFromXml = dateFrom
+            ? `<tns:YearDateFrom>${dateFrom}</tns:YearDateFrom>`
+            : "";
+          const yearDateToXml = dateTo
+            ? `<tns:YearDateTo>${dateTo}</tns:YearDateTo>`
+            : "";
+
+          const xmlText = await callSoap(
+            "GetMatches",
+            `<tns:GetMatchesRequest><tns:DivisionId>${divisionId}</tns:DivisionId>${yearDateFromXml}${yearDateToXml}<tns:WithDetails>${withDetails}</tns:WithDetails></tns:GetMatchesRequest>`,
+          );
+
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+          const matchEntries = getElementsByLocalName(
+            xmlDoc,
+            "TeamMatchesEntries",
+          );
+          const matches = [];
+
+          for (const entry of matchEntries) {
+            const details = getElementsByLocalName(entry, "MatchDetails")[0];
+
+            let homePlayers = [];
+            let awayPlayers = [];
+            let individualMatches = [];
+
+            if (details) {
+              const homePlayersNode = getElementsByLocalName(
+                details,
+                "HomePlayers",
+              )[0];
+              if (homePlayersNode) {
+                const playersNodes = getElementsByLocalName(
+                  homePlayersNode,
+                  "Players",
+                );
+                homePlayers = playersNodes.map((player) => ({
+                  position: Number(getDirectChildText(player, "Position", "0")),
+                  firstName: getDirectChildText(player, "FirstName"),
+                  ranking: getDirectChildText(player, "Ranking"),
+                  victoryCount: Number(
+                    getDirectChildText(player, "VictoryCount", "0"),
+                  ),
+                  isForfeited:
+                    getDirectChildText(player, "IsForfeited", "false") ===
+                    "true",
+                }));
+              }
+
+              const awayPlayersNode = getElementsByLocalName(
+                details,
+                "AwayPlayers",
+              )[0];
+              if (awayPlayersNode) {
+                const playersNodes = getElementsByLocalName(
+                  awayPlayersNode,
+                  "Players",
+                );
+                awayPlayers = playersNodes.map((player) => ({
+                  position: Number(getDirectChildText(player, "Position", "0")),
+                  firstName: getDirectChildText(player, "FirstName"),
+                  ranking: getDirectChildText(player, "Ranking"),
+                  victoryCount: Number(
+                    getDirectChildText(player, "VictoryCount", "0"),
+                  ),
+                  isForfeited:
+                    getDirectChildText(player, "IsForfeited", "false") ===
+                    "true",
+                }));
+              }
+
+              const singleMatchesNodes = getElementsByLocalName(
+                details,
+                "IndividualMatchResults",
+              );
+              individualMatches = singleMatchesNodes.map((single) => ({
+                position: Number(getDirectChildText(single, "Position", "0")),
+                homePlayerIndex: Number(
+                  getDirectChildText(single, "HomePlayerMatchIndex", "0"),
+                ),
+                awayPlayerIndex: Number(
+                  getDirectChildText(single, "AwayPlayerMatchIndex", "0"),
+                ),
+                homeSetCount: getDirectChildText(single, "HomeSetCount", "0"),
+                awaySetCount: getDirectChildText(single, "AwaySetCount", "0"),
+              }));
+            }
+
+            matches.push({
+              weekName: getDirectChildText(entry, "WeekName"),
+              date: getDirectChildText(entry, "Date"),
+              homeClub: getDirectChildText(entry, "HomeClub"),
+              homeTeam: getDirectChildText(entry, "HomeTeam"),
+              awayClub: getDirectChildText(entry, "AwayClub"),
+              awayTeam: getDirectChildText(entry, "AwayTeam"),
+              score: getDirectChildText(entry, "Score", "0 - 0"),
+              isCompleted: getDirectChildText(entry, "IsCompleted", "false"),
+              detailsCreated:
+                getDirectChildText(
+                  details || entry,
+                  "DetailsCreated",
+                  "false",
+                ) === "true",
+              homeScore: getDirectChildText(details || entry, "HomeScore", "0"),
+              awayScore: getDirectChildText(details || entry, "AwayScore", "0"),
+              homePlayers,
+              awayPlayers,
+              individualMatches,
+            });
+          }
+
+          return matches;
+        }
+
+        function renderUnusedBlock(target, blockNumber) {
+          target.innerHTML = `<div class="unused-layout"><div class="unused-left">${blockNumber}</div><div class="unused-right"><div class="unused-right-top"></div><div class="unused-right-bottom"></div></div></div>`;
+        }
+
+        function renderAllBlockPlaceholders() {
+          const gridItems = getGridItems();
+
+          for (let i = 0; i < gridItems.length; i++) {
+            const n = i + 1;
+            gridItems[i].innerHTML =
+              `<div class="unused-layout"><div class="unused-left">${n}-L</div><div class="unused-right"><div class="unused-right-top" style="display:flex;align-items:center;justify-content:center;font-size:0.78em;color:#444;">${n}-RT</div><div class="unused-right-bottom" style="display:flex;align-items:center;justify-content:center;font-size:0.78em;color:#444;">${n}-RB</div></div></div>`;
+          }
+        }
+
+        function resetGridPlaceholders(usedBlocks) {
+          const gridItems = getGridItems();
+          for (let i = 0; i < gridItems.length; i++) {
+            const blockNumber = i + 1;
+            if (usedBlocks.has(blockNumber)) {
+              gridItems[i].textContent = String(blockNumber);
+            } else {
+              renderUnusedBlock(gridItems[i], blockNumber);
+            }
+          }
+        }
+
+        function normalizeTeamName(teamName) {
+          let cleaned = teamName;
+
+          // Specifiek: zet De Woudpalet varianten om naar Houthulst i.p.v. alles weg te filteren.
+          cleaned = cleaned
+            .replace(/\bde\s+woudpalet\s+houthulst\b/gi, "Houthulst")
+            .replace(/\bde\s+woudpalet\b/gi, "Houthulst");
+
+          const patternsToRemove = [
+            /\bK\.?\s*T\.?\s*T\.?\s*C\.?\b/gi,
+            /\bT\.?\s*T\.?\s*C\.?\b/gi,
+            /\bT\.?\s*T\.?\b/gi,
+            /\bK\.?\s*T\.?\s*T\.?\s*V\.?\b/gi,
+            /\bT\.?\s*T\.?\s*V\.?\b/gi,
+            /\bT\.?\s*T\.?\s*K\.?\b/gi,
+            /\bT\.?\s*T\.?\s*W\.?\b/gi,
+            /\bwoudpalet\b/gi,
+            /\bvzw\b/gi,
+          ];
+
+          for (const pattern of patternsToRemove) {
+            cleaned = cleaned.replace(pattern, " ");
+          }
+
+          return cleaned
+            .replace(/\s*\.\s*/g, " ")
+            .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")
+            .replace(/\s{2,}/g, " ")
+            .trim();
+        }
+
+        function shortenOverviewTeamName(teamName) {
+          const normalized = normalizeTeamName(teamName);
+          const trimmed = String(normalized || "").trim();
+          if (!trimmed) {
+            return "";
+          }
+
+          const parts = trimmed.split(/\s+/);
+          if (parts.length >= 2) {
+            const suffix = parts[parts.length - 1];
+            const base = parts.slice(0, -1).join(" ");
+            let shortBase = base;
+
+            if (/^(sint|st)-/i.test(base)) {
+              shortBase = base.split(/\s+/)[0] || base;
+            } else if (/^(sint|st|la)\s+/i.test(base)) {
+              shortBase = base.split(/\s+/).slice(0, 2).join(" ") || base;
+            } else {
+              shortBase = base.split(/[-\s]+/)[0] || base;
+            }
+
+            return `${shortBase} ${suffix}`.trim();
+          }
+
+          if (/^(sint|st)-/i.test(trimmed)) {
+            return trimmed.split(/\s+/)[0] || trimmed;
+          }
+          if (/^(sint|st|la)\s+/i.test(trimmed)) {
+            return trimmed.split(/\s+/).slice(0, 2).join(" ") || trimmed;
+          }
+
+          return trimmed.split(/[-\s]+/)[0] || trimmed;
+        }
+
+        function parseApiDate(dateString) {
+          if (!dateString) {
+            return null;
+          }
+
+          const parts = dateString.split("-").map(Number);
+          if (parts.length !== 3 || parts.some(Number.isNaN)) {
+            return null;
+          }
+
+          return new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
+        }
+
+        function formatApiDate(date) {
+          const y = date.getFullYear();
+          const m = String(date.getMonth() + 1).padStart(2, "0");
+          const d = String(date.getDate()).padStart(2, "0");
+          return `${y}-${m}-${d}`;
+        }
+
+        function getMatchFetchDateWindow() {
+          const now = new Date();
+          const from = new Date(now);
+          const to = new Date(now);
+          from.setDate(from.getDate() - MATCH_FETCH_DAYS_BACK);
+          to.setDate(to.getDate() + MATCH_FETCH_DAYS_FORWARD);
+
+          return {
+            from: formatApiDate(from),
+            to: formatApiDate(to),
+          };
+        }
+
+        function formatShortDate(dateString) {
+          const parsed = parseApiDate(dateString);
+          if (!parsed) {
+            return dateString;
+          }
+
+          const day = String(parsed.getDate()).padStart(2, "0");
+          const month = String(parsed.getMonth() + 1).padStart(2, "0");
+          return `${day}/${month}`;
+        }
+
+        function normalizeScore(score) {
+          const cleaned = String(score || "").trim();
+          if (!cleaned) {
+            return "0-0";
+          }
+
+          const normalized = cleaned.replace(/\s*[-:]\s*/, "-");
+          return normalized === "-" ? "0-0" : normalized;
+        }
+
+        function buildStandingsSnapshot(entries) {
+          const snapshot = {};
+          for (const entry of entries) {
+            snapshot[entry.teamName] = String(entry.points);
+          }
+          return snapshot;
+        }
+
+        function updateStandingsHighlightState(letter, entries) {
+          const nextSnapshot = buildStandingsSnapshot(entries);
+          const prevSnapshot = previousStandingsByLetter[letter];
+
+          if (prevSnapshot) {
+            if (!standingsHighlightByLetter[letter]) {
+              standingsHighlightByLetter[letter] = {};
+            }
+
+            for (const [teamName, points] of Object.entries(nextSnapshot)) {
+              if (
+                Object.prototype.hasOwnProperty.call(prevSnapshot, teamName) &&
+                prevSnapshot[teamName] !== points
+              ) {
+                standingsHighlightByLetter[letter][teamName] = true;
+              }
+            }
+
+            saveStandingsHighlightState();
+          }
+
+          previousStandingsByLetter[letter] = nextSnapshot;
+        }
+
+        function isSinglePlayed(single) {
+          if (!single || typeof single !== "object") {
+            return false;
+          }
+
+          const homeSets = Number.parseInt(single.homeSetCount ?? "0", 10) || 0;
+          const awaySets = Number.parseInt(single.awaySetCount ?? "0", 10) || 0;
+          return homeSets > 0 || awaySets > 0;
+        }
+
+        function buildSinglesSnapshot(match, teamLetter) {
+          const base = Array.from({ length: 16 }, () => "-|0-0");
+          if (!match) {
+            return base;
+          }
+
+          const isHome =
+            match.homeClub === "WVL109" &&
+            isTeamLetterMatch(match.homeTeam, teamLetter);
+          const ourPlayers = isHome ? match.homePlayers : match.awayPlayers;
+          const oppPlayers = isHome ? match.awayPlayers : match.homePlayers;
+          const singles = match.individualMatches || [];
+
+          for (let idx = 0; idx < 16; idx++) {
+            const pos = idx + 1;
+            const single = singles.find((s) => s.position === pos);
+            if (!single) {
+              continue;
+            }
+
+            const ourPos = isHome
+              ? single.homePlayerIndex
+              : single.awayPlayerIndex;
+            const oppPos = isHome
+              ? single.awayPlayerIndex
+              : single.homePlayerIndex;
+            const ourPlayer = ourPlayers.find((p) => p.position === ourPos);
+            const oppPlayer = oppPlayers.find((p) => p.position === oppPos);
+            const ourName = ourPlayer ? toTitleCase(ourPlayer.firstName) : "?";
+            const oppName = oppPlayer ? toTitleCase(oppPlayer.firstName) : "?";
+            const score = isHome
+              ? `${single.homeSetCount}-${single.awaySetCount}`
+              : `${single.awaySetCount}-${single.homeSetCount}`;
+
+            base[idx] = `${ourName}-${oppName}|${score}`;
+          }
+
+          return base;
+        }
+
+        function updateSinglesHighlightState(letter, currentMatch) {
+          const now = Date.now();
+          const nextSnapshot = buildSinglesSnapshot(currentMatch, letter);
+          const prevSnapshot = previousSinglesByLetter[letter];
+
+          if (prevSnapshot) {
+            if (!singlesHighlightUntil[letter]) {
+              singlesHighlightUntil[letter] = {};
+            }
+
+            for (let i = 0; i < nextSnapshot.length; i++) {
+              if (prevSnapshot[i] !== nextSnapshot[i]) {
+                singlesHighlightUntil[letter][i + 1] =
+                  now + SINGLES_HIGHLIGHT_MS;
+              }
+            }
+          }
+
+          previousSinglesByLetter[letter] = nextSnapshot;
+        }
+
+        function toTitleCase(value) {
+          if (!value) {
+            return "";
+          }
+
+          return value
+            .toLocaleLowerCase("nl-BE")
+            .replace(
+              /(^|[^\p{L}])(\p{L})/gu,
+              (_, prefix, char) =>
+                `${prefix}${char.toLocaleUpperCase("nl-BE")}`,
+            );
+        }
+
+        function formatOrdinal(numericValue) {
+          const n = Number.parseInt(numericValue, 10);
+          if (!Number.isFinite(n)) {
+            return "";
+          }
+
+          return n === 1 ? "1ste" : `${n}de`;
+        }
+
+        function formatDivisionName(divisionName) {
+          const trimmed = String(divisionName || "").trim();
+          if (!trimmed) {
+            return "";
+          }
+
+          // Normalize separators/spacing to make matching tolerant.
+          const normalized = trimmed
+            .replace(/[\u2013\u2014]/g, "-")
+            .replace(/\s*-\s*/g, " - ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+          if (/^regionvttl$/i.test(normalized)) {
+            return "Landelijke";
+          }
+
+          const reeksMatch = normalized.match(/reeks\s*([a-z])/i);
+          const afdelingMatch = normalized.match(/afdeling\s*(\d+)\s*([a-z])/i);
+
+          if (reeksMatch && /regionvttl/i.test(normalized)) {
+            return `Landelijke ${reeksMatch[1].toUpperCase()}`;
+          }
+
+          if (afdelingMatch) {
+            const level = formatOrdinal(afdelingMatch[1]);
+            const reeksLetter = afdelingMatch[2].toUpperCase();
+
+            if (/nationaal/i.test(normalized)) {
+              return `${level} nationale ${reeksLetter}`;
+            }
+
+            if (/\bprov\b|\bprovinciaal\b|\bprovinciale\b/i.test(normalized)) {
+              return `${level} provinciale ${reeksLetter}`;
+            }
+
+            if (/regionvttl/i.test(normalized)) {
+              return `Landelijke ${reeksLetter}`;
+            }
+          }
+
+          return normalized;
+        }
+
+        function getUpcomingWeekMatches(matches) {
+          const now = new Date();
+          const reference = new Date(now);
+
+          const candidates = dedupeMatches(matches)
+            .map((match) => ({
+              ...match,
+              parsedDate: parseApiDate(match.date),
+              completed:
+                String(match.isCompleted).toLowerCase() === "true" ||
+                String(match.isCompleted) === "1",
+            }))
+            .filter((match) => match.parsedDate)
+            .sort((a, b) => a.parsedDate - b.parsedDate);
+
+          // Probeer eerst een recente match (binnen 4 dagen in het verleden)
+          const recentMatches = candidates.filter(
+            (match) => match.parsedDate <= reference,
+          );
+          const mostRecentMatch = recentMatches[recentMatches.length - 1];
+
+          if (mostRecentMatch) {
+            const daysDiff =
+              (reference - mostRecentMatch.parsedDate) / (1000 * 60 * 60 * 24);
+            if (daysDiff <= 4) {
+              // Toon alle matches van deze speelweek (ook al zijn sommige completed)
+              const week = mostRecentMatch.weekName;
+              return candidates.filter((match) => match.weekName === week);
+            }
+          }
+
+          // Anders: toon de eerstvolgende incomplete match en zijn speelweek
+          const next = candidates.find(
+            (match) => match.parsedDate >= reference && !match.completed,
+          );
+          if (!next) {
+            return [];
+          }
+
+          const week = next.weekName;
+          return candidates
+            .filter((match) => match.weekName === week)
+            .sort((a, b) => a.parsedDate - b.parsedDate);
+        }
+
+        function isTeamLetterMatch(teamName, letter) {
+          const normalized = normalizeTeamName(teamName).toUpperCase();
+          const wanted = letter.toUpperCase();
+          return normalized === wanted || normalized.endsWith(` ${wanted}`);
+        }
+
+        function getErrorMessage(error) {
+          if (error instanceof Error) {
+            return error.message || String(error);
+          }
+
+          try {
+            return JSON.stringify(error);
+          } catch {
+            return String(error);
+          }
+        }
+
+        function getMatchDedupKey(match) {
+          const safeMatch =
+            match && typeof match === "object" ? match : Object.create(null);
+
+          return [
+            String(safeMatch.date || "").trim(),
+            String(safeMatch.homeClub || "").trim(),
+            String(safeMatch.homeTeam || "")
+              .trim()
+              .toUpperCase(),
+            String(safeMatch.awayClub || "").trim(),
+            String(safeMatch.awayTeam || "")
+              .trim()
+              .toUpperCase(),
+          ].join("|");
+        }
+
+        function dedupeMatches(matches) {
+          const seen = new Set();
+          const unique = [];
+
+          for (const match of matches || []) {
+            if (!match || typeof match !== "object") {
+              continue;
+            }
+
+            const key = getMatchDedupKey(match);
+            if (seen.has(key)) {
+              continue;
+            }
+            seen.add(key);
+            unique.push(match);
+          }
+
+          return unique;
+        }
+
+        function getNextTeamMatchdays(matches, teamLetter, count = 5) {
+          const now = new Date();
+          const reference = new Date(now);
+
+          // Geen week-shift meer - we zoeken gewoon de eerstvolgende match
+          return dedupeMatches(matches)
+            .map((match) => ({
+              ...match,
+              parsedDate: parseApiDate(match.date),
+              completed:
+                String(match.isCompleted).toLowerCase() === "true" ||
+                String(match.isCompleted) === "1",
+            }))
+            .filter((match) => {
+              if (
+                !match.parsedDate ||
+                match.completed ||
+                match.parsedDate < reference
+              ) {
+                return false;
+              }
+
+              const homeIsOurTeam =
+                match.homeClub === "WVL109" &&
+                isTeamLetterMatch(match.homeTeam, teamLetter);
+              const awayIsOurTeam =
+                match.awayClub === "WVL109" &&
+                isTeamLetterMatch(match.awayTeam, teamLetter);
+
+              return homeIsOurTeam || awayIsOurTeam;
+            })
+            .sort((a, b) => a.parsedDate - b.parsedDate)
+            .slice(0, count);
+        }
+
+        function getCurrentTeamMatch(matches, teamLetter) {
+          const now = new Date();
+          const reference = new Date(now);
+
+          // Geen week-shift meer - we gebruiken gewoon 'now'
+          // Tot woensdag tonen we de meest recente match (ook al is deze voorbij)
+          // Vanaf woensdag schakelen we naar de volgende match
+          const dayOfWeek = reference.getDay(); // 0=zondag, 1=maandag, ..., 6=zaterdag
+          const showRecentMatch = dayOfWeek >= 6 || dayOfWeek <= 2; // zaterdag, zondag, maandag, dinsdag
+
+          const allTeamMatches = dedupeMatches(matches)
+            .map((match) => ({
+              ...match,
+              parsedDate: parseApiDate(match.date),
+            }))
+            .filter((match) => {
+              if (!match.parsedDate) {
+                return false;
+              }
+
+              const homeIsOurTeam =
+                match.homeClub === "WVL109" &&
+                isTeamLetterMatch(match.homeTeam, teamLetter);
+              const awayIsOurTeam =
+                match.awayClub === "WVL109" &&
+                isTeamLetterMatch(match.awayTeam, teamLetter);
+              return homeIsOurTeam || awayIsOurTeam;
+            });
+
+          if (showRecentMatch) {
+            // Zoek de meest recente AFGELOPEN match (in het verleden)
+            const pastMatches = allTeamMatches
+              .filter((match) => match.parsedDate <= reference)
+              .sort((a, b) => b.parsedDate - a.parsedDate); // meest recente eerst
+
+            // Als er een afgelopen match is binnen 4 dagen, toon die
+            const recentMatch = pastMatches[0];
+            if (recentMatch) {
+              const daysDiff =
+                (reference - recentMatch.parsedDate) / (1000 * 60 * 60 * 24);
+              if (daysDiff <= 4) {
+                return recentMatch;
+              }
+            }
+          }
+
+          // Vanaf woensdag (of als er geen recente match is): toon de volgende match
+          const futureMatches = allTeamMatches
+            .filter((match) => match.parsedDate >= reference)
+            .sort((a, b) => a.parsedDate - b.parsedDate);
+
+          return futureMatches[0] || null;
+        }
+
+        function renderCurrentMatchCard(
+          blockNumber,
+          match,
+          teamLetter,
+          upcomingMatches,
+          nextTeamMatchdays,
+        ) {
+          const gridItems = getGridItems();
+          const target = gridItems[blockNumber - 1];
+          if (!target) {
+            return;
+          }
+
+          const isTopRowMatches = blockNumber >= 6 && blockNumber <= 10;
+          const isBottomRowMatches = blockNumber >= 17 && blockNumber <= 22;
+          const isLargeMatchLayout = isTopRowMatches || isBottomRowMatches;
+          const leftFontSizeMatches = isLargeMatchLayout ? "0.72em" : "0.62em";
+          const rightFontSize = isLargeMatchLayout ? "0.86em" : "0.70em";
+          const playerNameFontSize = isLargeMatchLayout ? "1.12em" : "0.95em";
+
+          const hideOpponentStats = blockNumber >= 11;
+
+          const upcomingRowsHtml = upcomingMatches.length
+            ? upcomingMatches
+                .map((upcoming) => {
+                  const home = shortenOverviewTeamName(upcoming.homeTeam);
+                  const away = shortenOverviewTeamName(upcoming.awayTeam);
+                  const score = normalizeScore(upcoming.score);
+                  return `<div class="grid-col-upcoming p-0 border-bottom-light"><span class="text-left text-ellipsis">${home} - ${away}</span><span class="text-left tabular-nums ws-nowrap" style="justify-self:start;">${score}</span></div>`;
+                })
+                .join("")
+            : `<div class="pt-4 color-muted">Geen komende matchen</div>`;
+
+          const upcomingEmptyCount = Math.max(
+            0,
+            6 - (upcomingMatches.length || 1),
+          );
+          const upcomingEmptyRows = Array.from({ length: upcomingEmptyCount })
+            .map(
+              () =>
+                `<div class="grid-col-upcoming p-0 border-bottom-light" style="visibility:hidden;"><span>-</span><span>-</span></div>`,
+            )
+            .join("");
+          const upcomingRows = upcomingRowsHtml + upcomingEmptyRows;
+
+          const laterTeamMatchdays = nextTeamMatchdays.slice(1, 4);
+
+          const nextRowsHtml = laterTeamMatchdays.length
+            ? laterTeamMatchdays
+                .map((nextMatch) => {
+                  const homeIsOurTeam =
+                    nextMatch.homeClub === "WVL109" &&
+                    isTeamLetterMatch(nextMatch.homeTeam, teamLetter);
+
+                  const opponent = shortenOverviewTeamName(
+                    homeIsOurTeam ? nextMatch.awayTeam : nextMatch.homeTeam,
+                  );
+
+                  const ourLetter = `<span class="color-zandvoorde fw-bold">${teamLetter}</span>`;
+                  const pairing = homeIsOurTeam
+                    ? `${ourLetter} - ${opponent}`
+                    : `${opponent} - ${ourLetter}`;
+
+                  return `<div class="grid-col-next py-1 border-bottom-light"><span class="text-left tabular-nums">${formatShortDate(nextMatch.date)}</span><span class="text-left text-ellipsis">${pairing}</span></div>`;
+                })
+                .join("")
+            : `<div class="pt-4 color-muted">Geen volgende speeldagen</div>`;
+
+          const nextEmptyCount = Math.max(
+            0,
+            3 - (laterTeamMatchdays.length || 1),
+          );
+          const nextEmptyRows = Array.from({ length: nextEmptyCount })
+            .map(
+              () =>
+                `<div class="grid-col-next py-1 border-bottom-light" style="visibility:hidden;"><span>-</span><span>-</span></div>`,
+            )
+            .join("");
+          const nextRows = nextRowsHtml + nextEmptyRows;
+
+          const emptySingleRows = Array.from({ length: 16 }, (_, index) => {
+            const pos = index + 1;
+            const activeUntil = singlesHighlightUntil?.[teamLetter]?.[pos] || 0;
+            const rowStyle =
+              activeUntil > Date.now() ? "color-highlight fw-bold" : "";
+            return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted">0-0</span></div>`;
+          }).join("");
+
+          if (!match) {
+            target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${emptySingleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom color-muted" style="font-size:${rightFontSize};line-height:1.2;">Geen huidige match</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
+            return;
+          }
+
+          const isHome =
+            match.homeClub === "WVL109" &&
+            isTeamLetterMatch(match.homeTeam, teamLetter);
+          const opponent = normalizeTeamName(
+            isHome ? match.awayTeam : match.homeTeam,
+          );
+          const title = isHome
+            ? `${teamLetter} - ${opponent}`
+            : `${opponent} - ${teamLetter}`;
+
+          const ourPlayers = isHome ? match.homePlayers : match.awayPlayers;
+          const oppPlayers = isHome ? match.awayPlayers : match.homePlayers;
+          const singles = match.individualMatches || [];
+          const playedSingles = singles.filter((single) =>
+            isSinglePlayed(single),
+          );
+
+          const buildPlayerRows = (players, isHomeSide) => {
+            return Array.from({ length: 4 }, (_, index) => {
+              const pos = index + 1;
+              const player = players.find((p) => p.position === pos);
+              const displayName = player
+                ? toTitleCase(player.firstName)
+                : `Speler ${pos}`;
+              const ranking = player?.ranking || "-";
+
+              const isOurPlayer = isHomeSide === isHome;
+              const showStats = isOurPlayer || !hideOpponentStats;
+
+              if (showStats) {
+                const wins = player ? player.victoryCount : 0;
+                const pIdx = isHomeSide ? "homePlayerIndex" : "awayPlayerIndex";
+                const played = playedSingles.filter(
+                  (s) => Number(s?.[pIdx]) === pos,
+                ).length;
+                const statsText = player?.isForfeited
+                  ? "FF"
+                  : `${wins}/${played}`;
+                return `<div class="grid-col-player-stats p-0" style="font-size:${playerNameFontSize};"><span class="text-ellipsis">${displayName}</span><span class="text-right">${ranking}</span><span class="text-right tabular-nums">${statsText}</span></div>`;
+              }
+              return `<div class="grid-col-player-basic p-0" style="font-size:${playerNameFontSize};"><span class="text-ellipsis">${displayName}</span><span class="text-right">${ranking}</span></div>`;
+            }).join("");
+          };
+
+          const homePlayerRows = buildPlayerRows(
+            isHome ? ourPlayers : oppPlayers,
+            true,
+          );
+          const awayPlayerRows = buildPlayerRows(
+            isHome ? oppPlayers : ourPlayers,
+            false,
+          );
+
+          const columnTemplate = hideOpponentStats
+            ? isHome
+              ? "58% 42%"
+              : "42% 58%"
+            : "1fr 1fr";
+          const playerRows = `<div style="display:grid;grid-template-columns:${columnTemplate};column-gap:0;"><div style="padding-right:3px;border-right:1px solid #999;">${homePlayerRows}</div><div style="padding-left:3px;">${awayPlayerRows}</div></div>`;
+
+          const singleRows = Array.from({ length: 16 }, (_, index) => {
+            const pos = index + 1;
+            const single = singles.find((s) => s.position === pos);
+            const activeUntil = singlesHighlightUntil?.[teamLetter]?.[pos] || 0;
+            const rowStyle =
+              activeUntil > Date.now() ? "color-highlight fw-bold" : "";
+
+            if (!single) {
+              return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted">0-0</span></div>`;
+            }
+
+            const ourPos = isHome
+              ? single.homePlayerIndex
+              : single.awayPlayerIndex;
+            const oppPos = isHome
+              ? single.awayPlayerIndex
+              : single.homePlayerIndex;
+            const ourPlayer = ourPlayers.find((p) => p.position === ourPos);
+            const oppPlayer = oppPlayers.find((p) => p.position === oppPos);
+            const ourName = ourPlayer ? toTitleCase(ourPlayer.firstName) : "?";
+            const oppName = oppPlayer ? toTitleCase(oppPlayer.firstName) : "?";
+            const score = isHome
+              ? `${single.homeSetCount}-${single.awaySetCount}`
+              : `${single.awaySetCount}-${single.homeSetCount}`;
+
+            return `<div class="grid-col-single p-0 ${rowStyle}"><span class="text-ellipsis">${ourName}/${oppName}</span><span class="text-right tabular-nums">${score}</span></div>`;
+          }).join("");
+
+          const totalScore = match.detailsCreated
+            ? `${match.homeScore}-${match.awayScore}`
+            : normalizeScore(match.score);
+
+          const currentSummary = `<div class="grid-row-summary"><div class="grid-col-summary-top"><div class="fw-bold text-ellipsis" style="font-size:1.30em;">${title}</div><div class="text-right fw-bold tabular-nums ws-nowrap" style="font-size:1.3em;">${totalScore}</div></div><div>${playerRows}</div></div>`;
+
+          target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${singleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
+        }
+
+        function renderRankingInBlock(
+          blockNumber,
+          entries,
+          letter,
+          divisionName,
+        ) {
+          const gridItems = getGridItems();
+          const target = gridItems[blockNumber - 1];
+          if (!target) {
+            return;
+          }
+
+          const rankingRows = entries
+            .map((entry, index) => {
+              const displayName = normalizeTeamName(entry.teamName);
+              const changedToday = Boolean(
+                standingsHighlightByLetter?.[letter]?.[entry.teamName],
+              );
+              const isZandvoorde = displayName
+                .toLowerCase()
+                .includes("zandvoorde");
+              const rowStyle = changedToday ? "color-highlight fw-bold" : "";
+              const teamNameStyle =
+                !changedToday && isZandvoorde ? "color-zandvoorde fw-bold" : "";
+
+              return `<div class="grid-col-ranking py-1 border-bottom-eee ${rowStyle}"><span class="text-right tabular-nums">${index + 1}.</span><span class="text-left text-ellipsis ${teamNameStyle}">${displayName}</span><span class="text-right tabular-nums">${entry.gw}</span><span class="text-right tabular-nums">${entry.vw}</span><span class="text-right tabular-nums">${entry.dw}</span><span class="text-right tabular-nums">${entry.ff}</span><strong class="text-right tabular-nums">${entry.points}</strong></div>`;
+            })
+            .join("");
+
+          const formattedDivisionName = formatDivisionName(divisionName);
+          const divisionHeader = formattedDivisionName
+            ? `<div class="text-center text-ellipsis fw-bold border-bottom" style="font-size:0.83em;line-height:1.2;padding-bottom:4px;margin-bottom:4px;">${formattedDivisionName}</div>`
+            : "";
+          const placeholderCount = Math.max(
+            0,
+            EXPECTED_RANKING_TEAMS - (entries?.length || 0),
+          );
+          const placeholderRows = Array.from(
+            { length: placeholderCount },
+            (_, index) => {
+              const pos = (entries?.length || 0) + index + 1;
+              return `<div aria-hidden="true" class="grid-col-ranking py-1 border-bottom-eee" style="visibility:hidden;"><span class="text-right tabular-nums">${pos}.</span><span>&nbsp;</span><span>0</span><span>0</span><span>0</span><span>0</span><strong class="text-right tabular-nums">0</strong></div>`;
+            },
+          ).join("");
+
+          const rankingFontSize = blockNumber >= 11 ? "0.79em" : "0.735em";
+
+          target.innerHTML = `<div class="scroll-block" style="font-size:${rankingFontSize};line-height:1.12;">${divisionHeader}${rankingRows}${placeholderRows}</div>`;
+        }
+
+        function renderBlockError(blockNumber, message) {
+          const gridItems = getGridItems();
+          const target = gridItems[blockNumber - 1];
+          if (!target) {
+            return;
+          }
+
+          target.innerHTML = `<div style="text-align:center;font-size:0.8em;padding:6px;color:#b00020;">${message}</div>`;
+        }
+
+        async function fetchTeamsForClubCached(club) {
+          const now = Date.now();
+          if (
+            cachedClubTeams &&
+            now - cachedClubTeamsFetchedAt < TEAM_CACHE_MS
+          ) {
+            return cachedClubTeams;
+          }
+
+          const teams = await fetchTeamsForClub(club);
+          cachedClubTeams = teams;
+          cachedClubTeamsFetchedAt = now;
+          return teams;
+        }
+
+        async function loadStandings() {
+          try {
+            if (SHOW_PLACEHOLDERS) {
+              renderAllBlockPlaceholders();
+              return;
+            }
+
+            ensureGridInitialized(TEAM_BLOCK_MAP);
+
+            const teams = await fetchTeamsForClubCached("WVL109");
+
+            const letters = Object.keys(TEAM_BLOCK_MAP);
+
+            const results = await Promise.all(
+              letters.map(async (letter) => {
+                const team =
+                  teams.find(
+                    (entry) =>
+                      entry.teamName === letter &&
+                      entry.divisionCategory === "37",
+                  ) || teams.find((entry) => entry.teamName === letter);
+
+                if (!team?.divisionId) {
+                  return {
+                    letter,
+                    status: "missing",
+                  };
+                }
+
+                try {
+                  const ranking = await fetchDivisionRanking(team.divisionId);
+
+                  return {
+                    letter,
+                    status: "ok",
+                    divisionName: team.divisionName,
+                    ranking,
+                  };
+                } catch (error) {
+                  return {
+                    letter,
+                    status: "error",
+                    errorMessage: getErrorMessage(error),
+                  };
+                }
+              }),
+            );
+
+            for (const result of results) {
+              const blocks = TEAM_BLOCK_MAP[result.letter];
+
+              if (result.status === "missing") {
+                renderBlockError(
+                  blocks.ranking,
+                  `Team ${result.letter} niet gevonden`,
+                );
+                continue;
+              }
+
+              if (result.status === "error") {
+                renderBlockError(
+                  blocks.ranking,
+                  `Fout ${result.letter}: ${result.errorMessage || "onbekend"}`,
+                );
+                continue;
+              }
+
+              updateStandingsHighlightState(result.letter, result.ranking);
+              renderRankingInBlock(
+                blocks.ranking,
+                result.ranking,
+                result.letter,
+                result.divisionName,
+              );
+            }
+
+            saveGridSnapshot();
+          } catch (error) {
+            console.error("Error loading standings:", error);
+            renderBlockError(1, `Fout bij laden: ${getErrorMessage(error)}`);
+          }
+        }
+
+        async function loadMatches() {
+          try {
+            if (SHOW_PLACEHOLDERS) {
+              renderAllBlockPlaceholders();
+              return;
+            }
+
+            ensureGridInitialized(TEAM_BLOCK_MAP);
+
+            const teams = await fetchTeamsForClubCached("WVL109");
+            const dateWindow = getMatchFetchDateWindow();
+            const letters = Object.keys(TEAM_BLOCK_MAP);
+
+            const results = await Promise.all(
+              letters.map(async (letter) => {
+                const team =
+                  teams.find(
+                    (entry) =>
+                      entry.teamName === letter &&
+                      entry.divisionCategory === "37",
+                  ) || teams.find((entry) => entry.teamName === letter);
+
+                if (!team?.divisionId) {
+                  return {
+                    letter,
+                    status: "missing",
+                  };
+                }
+
+                try {
+                  const matches = await fetchDivisionMatches(
+                    team.divisionId,
+                    true,
+                    dateWindow.from,
+                    dateWindow.to,
+                  );
+                  const upcomingMatches = getUpcomingWeekMatches(matches);
+                  const nextTeamMatchdays = getNextTeamMatchdays(
+                    matches,
+                    letter,
+                    4,
+                  );
+                  const currentMatch = getCurrentTeamMatch(matches, letter);
+
+                  return {
+                    letter,
+                    status: "ok",
+                    currentMatch,
+                    upcomingMatches,
+                    nextTeamMatchdays,
+                  };
+                } catch (error) {
+                  return {
+                    letter,
+                    status: "error",
+                    errorMessage: getErrorMessage(error),
+                  };
+                }
+              }),
+            );
+
+            for (const result of results) {
+              const blocks = TEAM_BLOCK_MAP[result.letter];
+
+              if (result.status === "missing") {
+                renderBlockError(
+                  blocks.matches,
+                  `Team ${result.letter} niet gevonden`,
+                );
+                continue;
+              }
+
+              if (result.status === "error") {
+                renderBlockError(
+                  blocks.matches,
+                  `Fout ${result.letter}: ${result.errorMessage || "onbekend"}`,
+                );
+                continue;
+              }
+
+              updateSinglesHighlightState(result.letter, result.currentMatch);
+
+              renderCurrentMatchCard(
+                blocks.matches,
+                result.currentMatch,
+                result.letter,
+                result.upcomingMatches,
+                result.nextTeamMatchdays,
+              );
+            }
+
+            saveGridSnapshot();
+          } catch (error) {
+            console.error("Error loading matches:", error);
+            renderBlockError(6, `Fout bij laden: ${getErrorMessage(error)}`);
+          }
+        }
+
+        async function refreshStandings() {
+          if (standingsRefreshInProgress) {
+            return;
+          }
+
+          standingsRefreshInProgress = true;
+          try {
+            await loadStandings();
+          } finally {
+            standingsRefreshInProgress = false;
+          }
+        }
+
+        async function refreshMatches() {
+          if (matchesRefreshInProgress) {
+            return;
+          }
+
+          matchesRefreshInProgress = true;
+          try {
+            await loadMatches();
+          } finally {
+            matchesRefreshInProgress = false;
+          }
+        }
+
+        async function refreshStandingsAndReschedule() {
+          await refreshStandings();
+
+          standingsRefreshTimeoutId = setTimeout(
+            refreshStandingsAndReschedule,
+            getRefreshIntervalMs(),
+          );
+        }
+
+        function fitElementTextToContainer(target, options = {}) {
+          if (!target) {
+            return;
+          }
+
+          const minFontPx = options.minFontPx ?? 10;
+          const maxFontPx = options.maxFontPx ?? 180;
+          const width = target.clientWidth;
+          const height = target.clientHeight;
+
+          if (!width || !height) {
+            return;
+          }
+
+          const previousFontSize = target.style.fontSize;
+
+          let low = minFontPx;
+          let high = maxFontPx;
+
+          for (let i = 0; i < 12; i += 1) {
+            const mid = (low + high) / 2;
+            target.style.fontSize = `${mid}px`;
+
+            let fits =
+              target.scrollWidth <= width + 0.5 &&
+              target.scrollHeight <= height + 0.5;
+
+            if (fits) {
+              const inners = target.querySelectorAll(
+                ".scroll-block, .scroll-y-block",
+              );
+              for (let j = 0; j < inners.length; j++) {
+                if (
+                  inners[j].scrollHeight >
+                    Math.ceil(inners[j].clientHeight) + 1 ||
+                  inners[j].scrollWidth > Math.ceil(inners[j].clientWidth) + 1
+                ) {
+                  fits = false;
+                  break;
+                }
+              }
+            }
+
+            if (fits) {
+              low = mid;
+            } else {
+              high = mid;
+            }
+          }
+
+          const finalSize = Math.floor(low * 10) / 10;
+          target.style.fontSize = `${Math.max(minFontPx, finalSize)}px`;
+
+          if (!Number.isFinite(finalSize)) {
+            target.style.fontSize = previousFontSize;
+          }
+        }
+
+        function autoFitGridText() {
+          const gridItems = getGridItems();
+
+          for (let i = 0; i < gridItems.length; i += 1) {
+            const item = gridItems[i];
+            const hasVisibleText = item.textContent?.trim();
+            if (!hasVisibleText) {
+              continue;
+            }
+
+            const target = item.firstElementChild || item;
+            const maxFontPx = Math.max(
+              14,
+              Math.min(item.clientHeight * 0.9, item.clientWidth * 0.4),
+            );
+
+            fitElementTextToContainer(target, {
+              minFontPx: 10,
+              maxFontPx,
+            });
+          }
+        }
+
+        let autoFitRafId = null;
+
+        function scheduleAutoFitGridText() {
+          if (autoFitRafId !== null) {
+            cancelAnimationFrame(autoFitRafId);
+          }
+
+          autoFitRafId = requestAnimationFrame(() => {
+            autoFitRafId = null;
+            autoFitGridText();
+          });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+          loadStandingsHighlightState();
+          applyCachedGridSnapshot();
+          if (standingsRefreshTimeoutId) {
+            clearTimeout(standingsRefreshTimeoutId);
+          }
+          if (matchesRefreshIntervalId) {
+            clearInterval(matchesRefreshIntervalId);
+          }
+
+          refreshStandingsAndReschedule();
+          refreshMatches();
+          matchesRefreshIntervalId = setInterval(
+            refreshMatches,
+            MATCHES_POLL_INTERVAL_MS,
+          );
+
+          const grid = getGridElement();
+          if (grid) {
+            const observer = new MutationObserver(() => {
+              scheduleAutoFitGridText();
+            });
+
+            observer.observe(grid, {
+              childList: true,
+              subtree: true,
+              characterData: true,
+            });
+          }
+
+          scheduleAutoFitGridText();
+        });
+      </script>
+
+      <div class="control-buttons">
+        <a
+          class="control-btn"
+          href="https://www.ttczandvoorde.be"
+          title="Terug naar website"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          </svg>
+        </a>
+        <button class="control-btn" id="fullscreenBtn" title="Fullscreen (F11)">
+          <svg
+            id="fullscreenIcon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+            />
+          </svg>
+          <svg
+            id="exitFullscreenIcon"
+            style="display: none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <script>
+        const fullscreenBtn = rootEl?.querySelector("#fullscreenBtn");
+        const fullscreenIcon = rootEl?.querySelector("#fullscreenIcon");
+        const exitFullscreenIcon = rootEl?.querySelector("#exitFullscreenIcon");
+        let autoFullscreenAttempted = false;
+        const DESIGN_WIDTH = 1920;
+        const DESIGN_HEIGHT = 1080;
+        const MIN_LAYOUT_SCALE = 0.62;
+        const MAX_LAYOUT_SCALE = 1.15;
+
+        function updateLayoutScale() {
+          const rect = rootEl?.getBoundingClientRect();
+          const width = Math.max(rect?.width || window.innerWidth || 0, 1);
+          const height = Math.max(rect?.height || window.innerHeight || 0, 1);
+          const rawScale = Math.min(
+            width / DESIGN_WIDTH,
+            height / DESIGN_HEIGHT,
+          );
+          const scale = Math.max(
+            MIN_LAYOUT_SCALE,
+            Math.min(MAX_LAYOUT_SCALE, rawScale),
+          );
+          rootEl?.style.setProperty("--layout-scale", scale.toFixed(3));
+        }
+
+        async function requestFullscreenSafe() {
+          if (document.fullscreenElement) {
+            return true;
+          }
+
+          if (!rootEl?.requestFullscreen) {
+            return false;
+          }
+
+          try {
+            await rootEl.requestFullscreen({
+              navigationUI: "hide",
+            });
+            return true;
+          } catch {
+            return false;
+          }
+        }
+
+        function installFullscreenFallbackListeners() {
+          const tryFromGesture = async () => {
+            const ok = await requestFullscreenSafe();
+            if (ok) {
+              document.removeEventListener("click", tryFromGesture);
+              document.removeEventListener("keydown", tryFromGesture);
+              document.removeEventListener("touchstart", tryFromGesture);
+            }
+          };
+
+          document.addEventListener("click", tryFromGesture);
+          document.addEventListener("keydown", tryFromGesture);
+          document.addEventListener("touchstart", tryFromGesture);
+        }
+
+        async function tryAutoFullscreenOnce() {
+          if (autoFullscreenAttempted) {
+            return;
+          }
+
+          autoFullscreenAttempted = true;
+          const ok = await requestFullscreenSafe();
+
+          if (!ok) {
+            installFullscreenFallbackListeners();
+          }
+        }
+
+        function toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            requestFullscreenSafe();
+          } else {
+            document.exitFullscreen();
+          }
+        }
+
+        function updateFullscreenIcon() {
+          if (document.fullscreenElement) {
+            fullscreenIcon.style.display = "none";
+            exitFullscreenIcon.style.display = "block";
+          } else {
+            fullscreenIcon.style.display = "block";
+            exitFullscreenIcon.style.display = "none";
+          }
+
+          updateLayoutScale();
+        }
+
+        fullscreenBtn?.addEventListener("click", toggleFullscreen);
+        document.addEventListener("fullscreenchange", updateFullscreenIcon);
+        window.addEventListener("resize", () => {
+          updateLayoutScale();
+          scheduleAutoFitGridText();
+        });
+        window.addEventListener("orientationchange", updateLayoutScale);
+        window.addEventListener("load", tryAutoFullscreenOnce);
+        window.addEventListener("load", () => {
+          updateLayoutScale();
+          scheduleAutoFitGridText();
+        });
+        updateFullscreenIcon();
+      </script>
+    </div>
+  </body>
 </html>
