@@ -1393,7 +1393,7 @@
             },
           ).join("");
 
-          const rankingFontSize = blockNumber >= 11 ? "0.79em" : "0.735em";
+          const rankingFontSize = blockNumber >= 11 ? "0.68em" : "0.635em";
 
           target.innerHTML = `<div class="scroll-block" style="font-size:${rankingFontSize};line-height:1.12;">${divisionHeader}${rankingRows}${placeholderRows}</div>`;
         }
@@ -1710,7 +1710,7 @@
             const target = item.firstElementChild || item;
             const maxFontPx = Math.max(
               14,
-              Math.min(item.clientHeight * 0.9, item.clientWidth * 0.4),
+              Math.min(item.clientHeight * 0.75, item.clientWidth * 0.35),
             );
 
             fitElementTextToContainer(target, {
@@ -1814,7 +1814,7 @@
           const rect = rootEl?.getBoundingClientRect();
           const dpr = Math.max(1, window.devicePixelRatio || 1);
 
-          // Gebruik fysieke pixels: viewport × DPR
+          // Gebruik fysieke pixels: CSS-viewport × DPR
           const physicalWidth = Math.max(
             (rect?.width || window.innerWidth || 0) * dpr,
             1,
