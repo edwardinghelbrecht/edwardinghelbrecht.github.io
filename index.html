@@ -192,32 +192,32 @@
       /* Layout grids for cards */
       #liveUitslagenRoot .grid-col-upcoming {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 45px;
-        column-gap: 4px;
+        grid-template-columns: minmax(0, 1fr) 2.45em;
+        column-gap: 0.22em;
       }
       #liveUitslagenRoot .grid-col-next {
         display: grid;
-        grid-template-columns: 48px minmax(0, 1fr);
-        column-gap: 4px;
+        grid-template-columns: 2.6em minmax(0, 1fr);
+        column-gap: 0.22em;
       }
       #liveUitslagenRoot .grid-col-single-empty {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 28px;
-        column-gap: 1px;
+        grid-template-columns: minmax(0, 1fr) 1.5em;
+        column-gap: 0.05em;
       }
       #liveUitslagenRoot .grid-col-single {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 22px;
+        grid-template-columns: minmax(0, 1fr) 1.2em;
         column-gap: 0;
       }
       #liveUitslagenRoot .grid-col-player-stats {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 24px 26px;
+        grid-template-columns: minmax(0, 1fr) 1.3em 1.4em;
         column-gap: 0;
       }
       #liveUitslagenRoot .grid-col-player-basic {
         display: grid;
-        grid-template-columns: 1fr 24px;
+        grid-template-columns: 1fr 1.3em;
         column-gap: 0;
       }
       #liveUitslagenRoot .grid-row-summary {
@@ -227,15 +227,17 @@
       }
       #liveUitslagenRoot .grid-col-summary-top {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 55px;
-        column-gap: 4px;
+        grid-template-columns: minmax(0, 1fr) 3em;
+        column-gap: 0.22em;
         align-items: center;
       }
       #liveUitslagenRoot .grid-col-ranking {
         display: grid;
-        grid-template-columns: 28px minmax(0, 1fr) 22px 22px 22px 22px 30px;
+        grid-template-columns:
+          1.5em minmax(0, 1fr)
+          1.2em 1.2em 1.2em 1.2em 1.6em;
         align-items: center;
-        column-gap: 1px;
+        column-gap: 0.05em;
       }
       #liveUitslagenRoot .grid-col-ranking > span:first-child {
         padding-right: 4px;
@@ -295,6 +297,7 @@
 
       <script>
         const SOAP_ENDPOINT = "https://api.vttl.be/index.php?s=vttl";
+        const SEASON = 26; // 2025-2026
         const SHOW_PLACEHOLDERS = false;
         let hasInitializedGrid = false;
         const GRID_CACHE_KEY = "vttl-grid-snapshot-v1";
@@ -481,7 +484,7 @@
         async function fetchTeamsForClub(club) {
           const xmlText = await callSoap(
             "GetClubTeams",
-            `<tns:GetClubTeamsRequest><tns:Club>${club}</tns:Club></tns:GetClubTeamsRequest>`,
+            `<tns:GetClubTeamsRequest><tns:Club>${club}</tns:Club><tns:Season>${SEASON}</tns:Season></tns:GetClubTeamsRequest>`,
           );
 
           const parser = new DOMParser();
@@ -545,7 +548,7 @@
 
           const xmlText = await callSoap(
             "GetMatches",
-            `<tns:GetMatchesRequest><tns:DivisionId>${divisionId}</tns:DivisionId>${yearDateFromXml}${yearDateToXml}<tns:WithDetails>${withDetails}</tns:WithDetails></tns:GetMatchesRequest>`,
+            `<tns:GetMatchesRequest><tns:DivisionId>${divisionId}</tns:DivisionId><tns:Season>${SEASON}</tns:Season>${yearDateFromXml}${yearDateToXml}<tns:WithDetails>${withDetails}</tns:WithDetails></tns:GetMatchesRequest>`,
           );
 
           const parser = new DOMParser();
@@ -1242,10 +1245,9 @@
               activeUntil > Date.now() ? "color-highlight fw-bold" : "";
             return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted">0-0</span></div>`;
           }).join("");
-          const emptySingleRowsWrapped = `<div style="display:grid;grid-template-rows:repeat(16,1fr);height:100%;width:100%;">${emptySingleRows}</div>`;
 
           if (!match) {
-            target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${emptySingleRowsWrapped}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom color-muted" style="font-size:${rightFontSize};line-height:1.2;">Geen huidige match</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
+            target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${emptySingleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom color-muted" style="font-size:${rightFontSize};line-height:1.2;">Geen huidige match</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
             return;
           }
 
@@ -1343,7 +1345,7 @@
 
           const currentSummary = `<div class="grid-row-summary"><div class="grid-col-summary-top"><div class="fw-bold text-ellipsis" style="font-size:1.30em;">${title}</div><div class="text-right fw-bold tabular-nums ws-nowrap" style="font-size:1.3em;">${totalScore}</div></div><div>${playerRows}</div></div>`;
 
-          target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;"><div style="display:grid;grid-template-rows:repeat(16,1fr);height:100%;width:100%;">${singleRows}</div></div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
+          target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${singleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
         }
 
         function renderRankingInBlock(
@@ -1810,23 +1812,28 @@
 
         function updateLayoutScale() {
           const rect = rootEl?.getBoundingClientRect();
-          const width = Math.max(rect?.width || window.innerWidth || 0, 1);
-          const height = Math.max(rect?.height || window.innerHeight || 0, 1);
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+          // Gebruik fysieke pixels: viewport × DPR
+          const physicalWidth = Math.max(
+            (rect?.width || window.innerWidth || 0) * dpr,
+            1,
+          );
+          const physicalHeight = Math.max(
+            (rect?.height || window.innerHeight || 0) * dpr,
+            1,
+          );
+
           const rawScale = Math.min(
-            width / DESIGN_WIDTH,
-            height / DESIGN_HEIGHT,
+            physicalWidth / DESIGN_WIDTH,
+            physicalHeight / DESIGN_HEIGHT,
           );
           const scale = Math.max(
             MIN_LAYOUT_SCALE,
             Math.min(MAX_LAYOUT_SCALE, rawScale),
           );
-          const dpr = Math.max(1, window.devicePixelRatio || 1);
-          const dprScale = dpr >= 2.5 ? 0.88 : dpr >= 2 ? 0.92 : 1;
-          const adjustedScale = Math.max(
-            MIN_LAYOUT_SCALE,
-            Math.min(MAX_LAYOUT_SCALE, scale * dprScale),
-          );
-          rootEl?.style.setProperty("--layout-scale", adjustedScale.toFixed(3));
+
+          rootEl?.style.setProperty("--layout-scale", scale.toFixed(3));
         }
 
         async function requestFullscreenSafe() {
