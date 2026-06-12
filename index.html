@@ -1395,7 +1395,8 @@
 
           const rankingFontSize = blockNumber >= 11 ? "0.68em" : "0.635em";
 
-          target.innerHTML = `<div class="scroll-block" style="font-size:${rankingFontSize};line-height:1.12;">${divisionHeader}${rankingRows}${placeholderRows}</div>`;
+          target.innerHTML = `
+          <div class="scroll-block" data-no-autofit="true" style="font-size:0.44em;line-height:1.12;">${divisionHeader}${rankingRows}${placeholderRows}</div>`;
         }
 
         function renderBlockError(blockNumber, message) {
@@ -1702,12 +1703,20 @@
 
           for (let i = 0; i < gridItems.length; i += 1) {
             const item = gridItems[i];
+
+            // Ranking-blokken NIET auto-fitten
+            // Ze hebben al een handmatig getunede font-size.
+            if (item.querySelector("[data-no-autofit]")) {
+              continue;
+            }
+
             const hasVisibleText = item.textContent?.trim();
             if (!hasVisibleText) {
               continue;
             }
 
             const target = item.firstElementChild || item;
+
             const maxFontPx = Math.max(
               14,
               Math.min(item.clientHeight * 0.75, item.clientWidth * 0.35),
