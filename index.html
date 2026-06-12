@@ -1821,22 +1821,22 @@
 
         function updateLayoutScale() {
           const rect = rootEl?.getBoundingClientRect();
-          const dpr = Math.max(1, window.devicePixelRatio || 1);
 
-          // Gebruik fysieke pixels: CSS-viewport × DPR
-          const physicalWidth = Math.max(
-            (rect?.width || window.innerWidth || 0) * dpr,
-            1,
-          );
-          const physicalHeight = Math.max(
-            (rect?.height || window.innerHeight || 0) * dpr,
+          // Use CSS viewport (CSS pixels) for layout scaling so devicePixelRatio
+          // doesn't artificially inflate the scale on devices like Chromecast
+          // where the CSS viewport (960x540) maps to a higher physical
+          // resolution due to DPR (2) resulting in ~1920x1080.
+          const widthCss = Math.max(rect?.width || window.innerWidth || 0, 1);
+          const heightCss = Math.max(
+            rect?.height || window.innerHeight || 0,
             1,
           );
 
           const rawScale = Math.min(
-            physicalWidth / DESIGN_WIDTH,
-            physicalHeight / DESIGN_HEIGHT,
+            widthCss / DESIGN_WIDTH,
+            heightCss / DESIGN_HEIGHT,
           );
+
           const scale = Math.max(
             MIN_LAYOUT_SCALE,
             Math.min(MAX_LAYOUT_SCALE, rawScale),
