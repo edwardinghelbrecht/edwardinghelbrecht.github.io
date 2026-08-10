@@ -1421,6 +1421,48 @@
           target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${singleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
         }
 
+        function isSameTeam(name1, name2) {
+          if (!name1 || !name2) return false;
+
+          const a = name1.toLowerCase().trim();
+          const b = name2.toLowerCase().trim();
+
+          // 1. Als het exact overeenkomt, direct goedkeuren
+          if (a === b) return true;
+
+          const partsA = a.split(/\s+/);
+          const partsB = b.split(/\s+/);
+
+          const lastA = partsA[partsA.length - 1];
+          const lastB = partsB[partsB.length - 1];
+
+          // 2. De ploegletter (bijv 'a', 'b', 'c') of het cijfer moet in 99% van de gevallen matchen
+          if (lastA !== lastB) {
+            return false;
+          }
+
+          // 3. Verwijder de laatste letter/cijfer om enkel de clubnamen over te houden
+          const clubA = partsA.slice(0, -1).join(" ");
+          const clubB = partsB.slice(0, -1).join(" ");
+
+          if (!clubA || !clubB) return false;
+
+          // 4. Als de ene naam (bijv. "aye") volledig in de andere zit ("gtt aye"), is het een match
+          if (clubA.includes(clubB) || clubB.includes(clubA)) {
+            return true;
+          }
+
+          // 5. Hardcoded alias voor het Lauwe / And Leie probleem (zoals in blok D en G)
+          if (
+            (clubA.includes("and leie") && clubB.includes("lauwe")) ||
+            (clubB.includes("and leie") && clubA.includes("lauwe"))
+          ) {
+            return true;
+          }
+
+          return false;
+        }
+
         function renderRankingInBlock(
           blockNumber,
           entries,
@@ -1446,9 +1488,7 @@
                 .toLowerCase()
                 .includes("zandvoorde");
               // NEW: is dit de ploeg waartegen onze ploeg speelt (huidig of eerstvolgend)?
-              const isOpponent = Boolean(
-                opponentName && displayName === opponentName,
-              );
+              const isOpponent = isSameTeam(displayName, opponentName);
               const rowStyle = changedToday ? "color-highlight fw-bold" : "";
 
               let teamNameStyle = "";
