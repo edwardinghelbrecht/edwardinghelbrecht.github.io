@@ -350,7 +350,7 @@
 
       <script>
         const SOAP_ENDPOINT = "https://api.vttl.be/index.php?s=vttl";
-        const SEASON = 26;
+        //const SEASON = 26;
         const SHOW_PLACEHOLDERS = false;
         let hasInitializedGrid = false;
         const GRID_CACHE_KEY = "vttl-grid-snapshot-v1";
@@ -543,7 +543,7 @@
         async function fetchTeamsForClub(club) {
           const xmlText = await callSoap(
             "GetClubTeams",
-            `<tns:GetClubTeamsRequest><tns:Club>${club}</tns:Club><tns:Season>${SEASON}</tns:Season></tns:GetClubTeamsRequest>`,
+            `<tns:GetClubTeamsRequest><tns:Club>${club}</tns:Club></tns:GetClubTeamsRequest>`,
           );
 
           const parser = new DOMParser();
@@ -607,7 +607,7 @@
 
           const xmlText = await callSoap(
             "GetMatches",
-            `<tns:GetMatchesRequest><tns:DivisionId>${divisionId}</tns:DivisionId><tns:Season>${SEASON}</tns:Season>${yearDateFromXml}${yearDateToXml}<tns:WithDetails>${withDetails}</tns:WithDetails></tns:GetMatchesRequest>`,
+            `<tns:GetMatchesRequest><tns:DivisionId>${divisionId}</tns:DivisionId>${yearDateFromXml}${yearDateToXml}<tns:WithDetails>${withDetails}</tns:WithDetails></tns:GetMatchesRequest>`,
           );
 
           const parser = new DOMParser();
