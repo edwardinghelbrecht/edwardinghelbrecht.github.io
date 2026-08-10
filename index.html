@@ -272,7 +272,60 @@
         <div class="grid-item row-5-col">5</div>
 
         <!-- Row 2 (5 kolommen) -->
-        <div class="grid-item row-5-col major-divider middle-divider">6</div>
+        <div class="grid-item row-5-col major-divider middle-divider">
+          <div class="scroll-block grid-col-upcoming" style="width: 100%">
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                width: 100%;
+              "
+            >
+              <div class="grid-col-summary-top">
+                <div class="fw-bold text-left text-ellipsis">24/06 - 20:00</div>
+                <div class="text-center fw-bold tabular-nums">3 - 2</div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  gap: 8px;
+                "
+              >
+                <div style="flex: 1; min-width: 0">
+                  <div class="fw-bold text-left text-ellipsis">Houthulst 1</div>
+                  <div class="text-left color-muted text-ellipsis">
+                    J. Peeters / A. Janssens / M. De Smet
+                  </div>
+                </div>
+                <div
+                  style="
+                    width: 1px;
+                    background: #eee;
+                    height: 44px;
+                    margin: 0 8px;
+                  "
+                ></div>
+                <div style="flex: 1; min-width: 0">
+                  <div class="fw-bold text-left text-ellipsis">
+                    Denderleeuw 1
+                  </div>
+                  <div class="text-left color-muted text-ellipsis">
+                    L. Maes / K. Dupont / S. Van Dam
+                  </div>
+                </div>
+              </div>
+              <div
+                class="text-left color-muted"
+                style="font-size: 0.9em; padding-top: 4px"
+              >
+                Speeldag: 12 · Klassement: 3de
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="grid-item row-5-col major-divider middle-divider">7</div>
         <div class="grid-item row-5-col major-divider middle-divider">8</div>
         <div class="grid-item row-5-col major-divider middle-divider">9</div>
@@ -335,6 +388,12 @@
         let previousSinglesByLetter = {};
         let singlesHighlightUntil = {};
         let standingsHighlightByLetter = {};
+        // NEW: houdt per teamletter de (genormaliseerde) naam van de huidige tegenstander bij,
+        // zodat we die ploeg in het klassement vetgedrukt kunnen tonen.
+        let currentOpponentByLetter = {};
+        // NEW: cache van de laatst opgehaalde klassementsgegevens per letter, zodat we het
+        // klassement opnieuw kunnen renderen (met bijgewerkte tegenstander) zonder een nieuwe fetch.
+        let lastRankingByLetter = {};
 
         function getRefreshIntervalMs() {
           const hour = new Date().getHours();
@@ -902,6 +961,20 @@
           previousSinglesByLetter[letter] = nextSnapshot;
         }
 
+        // NEW: bepaal de genormaliseerde naam van de tegenstander in de huidige/eerstvolgende match.
+        function getOpponentTeamName(match, teamLetter) {
+          if (!match) {
+            return null;
+          }
+
+          const isHome =
+            match.homeClub === "WVL109" &&
+            isTeamLetterMatch(match.homeTeam, teamLetter);
+          const opponentRaw = isHome ? match.awayTeam : match.homeTeam;
+          const normalized = normalizeTeamName(opponentRaw);
+          return normalized || null;
+        }
+
         function toTitleCase(value) {
           if (!value) {
             return "";
@@ -1360,6 +1433,9 @@
             return;
           }
 
+          // NEW: naam van de tegenstander van deze ploeg (indien gekend), om vet weer te geven.
+          const opponentName = currentOpponentByLetter[letter] || null;
+
           const rankingRows = entries
             .map((entry, index) => {
               const displayName = normalizeTeamName(entry.teamName);
@@ -1369,9 +1445,19 @@
               const isZandvoorde = displayName
                 .toLowerCase()
                 .includes("zandvoorde");
+              // NEW: is dit de ploeg waartegen onze ploeg speelt (huidig of eerstvolgend)?
+              const isOpponent = Boolean(
+                opponentName && displayName === opponentName,
+              );
               const rowStyle = changedToday ? "color-highlight fw-bold" : "";
-              const teamNameStyle =
-                !changedToday && isZandvoorde ? "color-zandvoorde fw-bold" : "";
+
+              let teamNameStyle = "";
+              if (!changedToday && isZandvoorde) {
+                teamNameStyle = "color-zandvoorde fw-bold";
+              }
+              if (isOpponent) {
+                teamNameStyle = `${teamNameStyle} fw-bold`.trim();
+              }
 
               return `<div class="grid-col-ranking py-1 border-bottom-eee ${rowStyle}"><span class="text-right tabular-nums">${index + 1}.</span><span class="text-left text-ellipsis ${teamNameStyle}">${displayName}</span><span class="text-right tabular-nums">${entry.gw}</span><span class="text-right tabular-nums">${entry.vw}</span><span class="text-right tabular-nums">${entry.dw}</span><span class="text-right tabular-nums">${entry.ff}</span><strong class="text-right tabular-nums">${entry.points}</strong></div>`;
             })
@@ -1491,6 +1577,12 @@
               }
 
               updateStandingsHighlightState(result.letter, result.ranking);
+              // NEW: bewaar het klassement zodat we het opnieuw kunnen renderen
+              // wanneer de tegenstander (uit loadMatches) wijzigt.
+              lastRankingByLetter[result.letter] = {
+                entries: result.ranking,
+                divisionName: result.divisionName,
+              };
               renderRankingInBlock(
                 blocks.ranking,
                 result.ranking,
@@ -1587,6 +1679,26 @@
               }
 
               updateSinglesHighlightState(result.letter, result.currentMatch);
+
+              // NEW: bijhouden wie de tegenstander is, en het klassement
+              // herrenderen zodat die ploeg vetgedrukt wordt weergegeven.
+              const opponentName = getOpponentTeamName(
+                result.currentMatch,
+                result.letter,
+              );
+              const opponentChanged =
+                currentOpponentByLetter[result.letter] !== opponentName;
+              currentOpponentByLetter[result.letter] = opponentName;
+
+              if (opponentChanged && lastRankingByLetter[result.letter]) {
+                const cachedRanking = lastRankingByLetter[result.letter];
+                renderRankingInBlock(
+                  blocks.ranking,
+                  cachedRanking.entries,
+                  result.letter,
+                  cachedRanking.divisionName,
+                );
+              }
 
               renderCurrentMatchCard(
                 blocks.matches,
