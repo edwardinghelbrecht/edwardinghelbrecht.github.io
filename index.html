@@ -23,14 +23,13 @@
 
       #liveUitslagenRoot .grid-container {
         display: grid;
-        /* Een raster van 30 kolommen, we berekenen de blokken om over deze kolommen heen te spannen (KGV van 5 en 6 is 30) */
         grid-template-columns: repeat(30, 1fr);
         grid-template-rows: 23% 27% 23% 27%;
-        gap: 1px; /* Dunne lijnen tussen de blokken */
-        background-color: #ccc; /* Kleur van de lijnen */
+        gap: 1px;
+        background-color: #ccc;
         width: 100%;
         height: 100%;
-        padding: 1px; /* Rand buitenkant */
+        padding: 1px;
         box-sizing: border-box;
       }
 
@@ -89,12 +88,10 @@
         border-bottom: 1px solid #ddd;
       }
 
-      /* Rij 1 en 2 hebben 5 kolommen (10 blokken totaal). 30 / 5 = elk blok spant over 6 raster-kolommen */
       #liveUitslagenRoot .row-5-col {
         grid-column: span 6;
       }
 
-      /* Rij 3 en 4 hebben 6 kolommen (12 blokken totaal). 30 / 6 = elk blok spant over 5 raster-kolommen */
       #liveUitslagenRoot .row-6-col {
         grid-column: span 5;
       }
@@ -133,7 +130,6 @@
         fill: white;
       }
 
-      /* Utility classes for string templates */
       #liveUitslagenRoot .text-left {
         text-align: left;
       }
@@ -189,7 +185,6 @@
         white-space: nowrap;
       }
 
-      /* Layout grids for cards */
       #liveUitslagenRoot .grid-col-upcoming {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 2.45em;
@@ -202,18 +197,18 @@
       }
       #liveUitslagenRoot .grid-col-single-empty {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 1.5em;
+        grid-template-columns: minmax(0, 1fr) 1.8em;
         column-gap: 0.05em;
       }
       #liveUitslagenRoot .grid-col-single {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 1.2em;
+        grid-template-columns: minmax(0, 1fr) 1.8em;
         column-gap: 0;
       }
       #liveUitslagenRoot .grid-col-player-stats {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 1.3em 1.4em;
-        column-gap: 0;
+        grid-template-columns: minmax(0, 1fr) 1.3em 1.6em;
+        column-gap: 0.35em;
       }
       #liveUitslagenRoot .grid-col-player-basic {
         display: grid;
@@ -264,74 +259,18 @@
   <body>
     <div id="liveUitslagenRoot">
       <div class="grid-container" id="gridContainer">
-        <!-- Row 1 (5 kolommen) -->
         <div class="grid-item row-5-col major-divider">1</div>
         <div class="grid-item row-5-col major-divider">2</div>
         <div class="grid-item row-5-col major-divider">3</div>
         <div class="grid-item row-5-col major-divider">4</div>
         <div class="grid-item row-5-col">5</div>
 
-        <!-- Row 2 (5 kolommen) -->
-        <div class="grid-item row-5-col major-divider middle-divider">
-          <div class="scroll-block grid-col-upcoming" style="width: 100%">
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-                width: 100%;
-              "
-            >
-              <div class="grid-col-summary-top">
-                <div class="fw-bold text-left text-ellipsis">24/06 - 20:00</div>
-                <div class="text-center fw-bold tabular-nums">3 - 2</div>
-              </div>
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  gap: 8px;
-                "
-              >
-                <div style="flex: 1; min-width: 0">
-                  <div class="fw-bold text-left text-ellipsis">Houthulst 1</div>
-                  <div class="text-left color-muted text-ellipsis">
-                    J. Peeters / A. Janssens / M. De Smet
-                  </div>
-                </div>
-                <div
-                  style="
-                    width: 1px;
-                    background: #eee;
-                    height: 44px;
-                    margin: 0 8px;
-                  "
-                ></div>
-                <div style="flex: 1; min-width: 0">
-                  <div class="fw-bold text-left text-ellipsis">
-                    Denderleeuw 1
-                  </div>
-                  <div class="text-left color-muted text-ellipsis">
-                    L. Maes / K. Dupont / S. Van Dam
-                  </div>
-                </div>
-              </div>
-              <div
-                class="text-left color-muted"
-                style="font-size: 0.9em; padding-top: 4px"
-              >
-                Speeldag: 12 · Klassement: 3de
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="grid-item row-5-col major-divider middle-divider">6</div>
         <div class="grid-item row-5-col major-divider middle-divider">7</div>
         <div class="grid-item row-5-col major-divider middle-divider">8</div>
         <div class="grid-item row-5-col major-divider middle-divider">9</div>
         <div class="grid-item row-5-col middle-divider">10</div>
 
-        <!-- Row 3 (6 kolommen) -->
         <div class="grid-item row-6-col major-divider">11</div>
         <div class="grid-item row-6-col major-divider">12</div>
         <div class="grid-item row-6-col major-divider">13</div>
@@ -339,7 +278,6 @@
         <div class="grid-item row-6-col major-divider">15</div>
         <div class="grid-item row-6-col">16</div>
 
-        <!-- Row 4 (6 kolommen) -->
         <div class="grid-item row-6-col major-divider">17</div>
         <div class="grid-item row-6-col major-divider">18</div>
         <div class="grid-item row-6-col major-divider">19</div>
@@ -350,7 +288,6 @@
 
       <script>
         const SOAP_ENDPOINT = "https://api.vttl.be/index.php?s=vttl";
-        //const SEASON = 26;
         const SHOW_PLACEHOLDERS = false;
         let hasInitializedGrid = false;
         const GRID_CACHE_KEY = "vttl-grid-snapshot-v1";
@@ -378,6 +315,47 @@
           K: { ranking: 16, matches: 22 },
         };
 
+        function shortenPlayerName(name) {
+          if (!name) return "";
+          const cleaned = name.trim();
+          const lower = cleaned.toLowerCase();
+
+          const manualMap = {
+            matthias: "Matth.",
+            matias: "Matth.",
+            mathias: "Math.",
+            carolien: "Caro",
+            caroline: "Caro",
+            alexander: "Alex",
+            maximiliaan: "Maxim",
+            maximilian: "Maxim",
+            sebastiaan: "Sebas.",
+            sebastian: "Sebas.",
+            christophe: "Chris",
+            christof: "Chris",
+            frederik: "Fred.",
+            frederick: "Fred.",
+            jonathan: "Jonath.",
+            guillaume: "Guill.",
+            thibault: "Thib.",
+            thibaut: "Thib.",
+            valentin: "Valen.",
+            benjamin: "Benj.",
+            stephanie: "Steph.",
+            charlotte: "Charl.",
+          };
+
+          if (manualMap[lower]) {
+            return manualMap[lower];
+          }
+
+          if (cleaned.length > 7) {
+            return cleaned.slice(0, 5) + ".";
+          }
+
+          return cleaned;
+        }
+
         let standingsRefreshInProgress = false;
         let matchesRefreshInProgress = false;
         let standingsRefreshTimeoutId = null;
@@ -388,11 +366,7 @@
         let previousSinglesByLetter = {};
         let singlesHighlightUntil = {};
         let standingsHighlightByLetter = {};
-        // NEW: houdt per teamletter de (genormaliseerde) naam van de huidige tegenstander bij,
-        // zodat we die ploeg in het klassement vetgedrukt kunnen tonen.
         let currentOpponentByLetter = {};
-        // NEW: cache van de laatst opgehaalde klassementsgegevens per letter, zodat we het
-        // klassement opnieuw kunnen renderen (met bijgewerkte tegenstander) zonder een nieuwe fetch.
         let lastRankingByLetter = {};
 
         function getRefreshIntervalMs() {
@@ -450,9 +424,7 @@
                 highlights: standingsHighlightByLetter,
               }),
             );
-          } catch {
-            // ignore persistence errors
-          }
+          } catch {}
         }
 
         const rootEl = document.getElementById("liveUitslagenRoot");
@@ -742,7 +714,6 @@
         function normalizeTeamName(teamName) {
           let cleaned = teamName;
 
-          // Specifiek: zet De Woudpalet varianten om naar Houthulst i.p.v. alles weg te filteren.
           cleaned = cleaned
             .replace(/\bde\s+woudpalet\s+houthulst\b/gi, "Houthulst")
             .replace(/\bde\s+woudpalet\b/gi, "Houthulst");
@@ -961,7 +932,6 @@
           previousSinglesByLetter[letter] = nextSnapshot;
         }
 
-        // NEW: bepaal de genormaliseerde naam van de tegenstander in de huidige/eerstvolgende match.
         function getOpponentTeamName(match, teamLetter) {
           if (!match) {
             return null;
@@ -1004,7 +974,6 @@
             return "";
           }
 
-          // Normalize separators/spacing to make matching tolerant.
           const normalized = trimmed
             .replace(/[\u2013\u2014]/g, "-")
             .replace(/\s*-\s*/g, " - ")
@@ -1057,7 +1026,6 @@
             .filter((match) => match.parsedDate)
             .sort((a, b) => a.parsedDate - b.parsedDate);
 
-          // Probeer eerst een recente match (binnen 4 dagen in het verleden)
           const recentMatches = candidates.filter(
             (match) => match.parsedDate <= reference,
           );
@@ -1067,13 +1035,11 @@
             const daysDiff =
               (reference - mostRecentMatch.parsedDate) / (1000 * 60 * 60 * 24);
             if (daysDiff <= 4) {
-              // Toon alle matches van deze speelweek (ook al zijn sommige completed)
               const week = mostRecentMatch.weekName;
               return candidates.filter((match) => match.weekName === week);
             }
           }
 
-          // Anders: toon de eerstvolgende incomplete match en zijn speelweek
           const next = candidates.find(
             (match) => match.parsedDate >= reference && !match.completed,
           );
@@ -1146,7 +1112,6 @@
           const now = new Date();
           const reference = new Date(now);
 
-          // Geen week-shift meer - we zoeken gewoon de eerstvolgende match
           return dedupeMatches(matches)
             .map((match) => ({
               ...match,
@@ -1181,11 +1146,8 @@
           const now = new Date();
           const reference = new Date(now);
 
-          // Geen week-shift meer - we gebruiken gewoon 'now'
-          // Tot woensdag tonen we de meest recente match (ook al is deze voorbij)
-          // Vanaf woensdag schakelen we naar de volgende match
-          const dayOfWeek = reference.getDay(); // 0=zondag, 1=maandag, ..., 6=zaterdag
-          const showRecentMatch = dayOfWeek >= 6 || dayOfWeek <= 2; // zaterdag, zondag, maandag, dinsdag
+          const dayOfWeek = reference.getDay();
+          const showRecentMatch = dayOfWeek >= 6 || dayOfWeek <= 2;
 
           const allTeamMatches = dedupeMatches(matches)
             .map((match) => ({
@@ -1207,12 +1169,10 @@
             });
 
           if (showRecentMatch) {
-            // Zoek de meest recente AFGELOPEN match (in het verleden)
             const pastMatches = allTeamMatches
               .filter((match) => match.parsedDate <= reference)
-              .sort((a, b) => b.parsedDate - a.parsedDate); // meest recente eerst
+              .sort((a, b) => b.parsedDate - a.parsedDate);
 
-            // Als er een afgelopen match is binnen 4 dagen, toon die
             const recentMatch = pastMatches[0];
             if (recentMatch) {
               const daysDiff =
@@ -1223,7 +1183,6 @@
             }
           }
 
-          // Vanaf woensdag (of als er geen recente match is): toon de volgende match
           const futureMatches = allTeamMatches
             .filter((match) => match.parsedDate >= reference)
             .sort((a, b) => a.parsedDate - b.parsedDate);
@@ -1244,10 +1203,10 @@
             return;
           }
 
+          const isBottomRow = blockNumber >= 17 && blockNumber <= 22;
           const isTopRowMatches = blockNumber >= 6 && blockNumber <= 10;
-          const isBottomRowMatches = blockNumber >= 17 && blockNumber <= 22;
-          const isLargeMatchLayout = isTopRowMatches || isBottomRowMatches;
-          const leftFontSizeMatches = isLargeMatchLayout ? "0.72em" : "0.62em";
+          const isLargeMatchLayout = isTopRowMatches || isBottomRow;
+          const leftFontSizeMatches = isBottomRow ? "0.78em" : "0.92em";
           const rightFontSize = isLargeMatchLayout ? "0.86em" : "0.70em";
           const playerNameFontSize = isLargeMatchLayout ? "1.12em" : "0.95em";
 
@@ -1316,7 +1275,7 @@
             const activeUntil = singlesHighlightUntil?.[teamLetter]?.[pos] || 0;
             const rowStyle =
               activeUntil > Date.now() ? "color-highlight fw-bold" : "";
-            return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted">0-0</span></div>`;
+            return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted ws-nowrap tabular-nums">0-0</span></div>`;
           }).join("");
 
           if (!match) {
@@ -1392,7 +1351,7 @@
               activeUntil > Date.now() ? "color-highlight fw-bold" : "";
 
             if (!single) {
-              return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted">0-0</span></div>`;
+              return `<div class="grid-col-single-empty p-0 ${rowStyle}"><span class="color-muted text-ellipsis">-</span><span class="text-right color-muted ws-nowrap tabular-nums">0-0</span></div>`;
             }
 
             const ourPos = isHome
@@ -1403,13 +1362,17 @@
               : single.homePlayerIndex;
             const ourPlayer = ourPlayers.find((p) => p.position === ourPos);
             const oppPlayer = oppPlayers.find((p) => p.position === oppPos);
-            const ourName = ourPlayer ? toTitleCase(ourPlayer.firstName) : "?";
-            const oppName = oppPlayer ? toTitleCase(oppPlayer.firstName) : "?";
+            const ourName = ourPlayer
+              ? shortenPlayerName(toTitleCase(ourPlayer.firstName))
+              : "?";
+            const oppName = oppPlayer
+              ? shortenPlayerName(toTitleCase(oppPlayer.firstName))
+              : "?";
             const score = isHome
               ? `${single.homeSetCount}-${single.awaySetCount}`
               : `${single.awaySetCount}-${single.homeSetCount}`;
 
-            return `<div class="grid-col-single p-0 ${rowStyle}"><span class="text-ellipsis">${ourName}/${oppName}</span><span class="text-right tabular-nums">${score}</span></div>`;
+            return `<div class="grid-col-single p-0 ${rowStyle}"><span class="text-ellipsis">${ourName}/${oppName}</span><span class="text-right tabular-nums ws-nowrap">${score}</span></div>`;
           }).join("");
 
           const totalScore = match.detailsCreated
@@ -1418,7 +1381,7 @@
 
           const currentSummary = `<div class="grid-row-summary"><div class="grid-col-summary-top"><div class="fw-bold text-ellipsis" style="font-size:1.30em;">${title}</div><div class="text-right fw-bold tabular-nums ws-nowrap" style="font-size:1.3em;">${totalScore}</div></div><div>${playerRows}</div></div>`;
 
-          target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.12;">${singleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
+          target.innerHTML = `<div class="unused-layout"><div class="unused-left unused-left-content"><div class="scroll-block" style="font-size:${leftFontSizeMatches};line-height:1.15;">${singleRows}</div></div><div class="unused-right grid-unused-right-layout"><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.15;">${currentSummary}</div><div class="scroll-y-block border-bottom" style="font-size:${rightFontSize};line-height:1.2;">${upcomingRows}</div><div class="scroll-y-block" style="font-size:${rightFontSize};line-height:1.2;">${nextRows}</div></div></div>`;
         }
 
         function isSameTeam(name1, name2) {
@@ -1427,7 +1390,6 @@
           const a = name1.toLowerCase().trim();
           const b = name2.toLowerCase().trim();
 
-          // 1. Als het exact overeenkomt, direct goedkeuren
           if (a === b) return true;
 
           const partsA = a.split(/\s+/);
@@ -1436,23 +1398,19 @@
           const lastA = partsA[partsA.length - 1];
           const lastB = partsB[partsB.length - 1];
 
-          // 2. De ploegletter (bijv 'a', 'b', 'c') of het cijfer moet in 99% van de gevallen matchen
           if (lastA !== lastB) {
             return false;
           }
 
-          // 3. Verwijder de laatste letter/cijfer om enkel de clubnamen over te houden
           const clubA = partsA.slice(0, -1).join(" ");
           const clubB = partsB.slice(0, -1).join(" ");
 
           if (!clubA || !clubB) return false;
 
-          // 4. Als de ene naam (bijv. "aye") volledig in de andere zit ("gtt aye"), is het een match
           if (clubA.includes(clubB) || clubB.includes(clubA)) {
             return true;
           }
 
-          // 5. Hardcoded alias voor het Lauwe / And Leie probleem (zoals in blok D en G)
           if (
             (clubA.includes("and leie") && clubB.includes("lauwe")) ||
             (clubB.includes("and leie") && clubA.includes("lauwe"))
@@ -1475,7 +1433,6 @@
             return;
           }
 
-          // NEW: naam van de tegenstander van deze ploeg (indien gekend), om vet weer te geven.
           const opponentName = currentOpponentByLetter[letter] || null;
 
           const rankingRows = entries
@@ -1487,7 +1444,6 @@
               const isZandvoorde = displayName
                 .toLowerCase()
                 .includes("zandvoorde");
-              // NEW: is dit de ploeg waartegen onze ploeg speelt (huidig of eerstvolgend)?
               const isOpponent = isSameTeam(displayName, opponentName);
               const rowStyle = changedToday ? "color-highlight fw-bold" : "";
 
@@ -1559,7 +1515,6 @@
             ensureGridInitialized(TEAM_BLOCK_MAP);
 
             const teams = await fetchTeamsForClubCached("WVL109");
-
             const letters = Object.keys(TEAM_BLOCK_MAP);
 
             const results = await Promise.all(
@@ -1617,8 +1572,6 @@
               }
 
               updateStandingsHighlightState(result.letter, result.ranking);
-              // NEW: bewaar het klassement zodat we het opnieuw kunnen renderen
-              // wanneer de tegenstander (uit loadMatches) wijzigt.
               lastRankingByLetter[result.letter] = {
                 entries: result.ranking,
                 divisionName: result.divisionName,
@@ -1720,8 +1673,6 @@
 
               updateSinglesHighlightState(result.letter, result.currentMatch);
 
-              // NEW: bijhouden wie de tegenstander is, en het klassement
-              // herrenderen zodat die ploeg vetgedrukt wordt weergegeven.
               const opponentName = getOpponentTeamName(
                 result.currentMatch,
                 result.letter,
@@ -1964,21 +1915,12 @@
 
         function updateLayoutScale() {
           const rect = rootEl?.getBoundingClientRect();
-          const dpr = Math.max(1, window.devicePixelRatio || 1);
-
-          // Gebruik fysieke pixels: CSS-viewport × DPR
-          const physicalWidth = Math.max(
-            (rect?.width || window.innerWidth || 0) * dpr,
-            1,
-          );
-          const physicalHeight = Math.max(
-            (rect?.height || window.innerHeight || 0) * dpr,
-            1,
-          );
+          const width = Math.max(rect?.width || window.innerWidth || 0, 1);
+          const height = Math.max(rect?.height || window.innerHeight || 0, 1);
 
           const rawScale = Math.min(
-            physicalWidth / DESIGN_WIDTH,
-            physicalHeight / DESIGN_HEIGHT,
+            width / DESIGN_WIDTH,
+            height / DESIGN_HEIGHT,
           );
           const scale = Math.max(
             MIN_LAYOUT_SCALE,
