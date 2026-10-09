@@ -1,10 +1,47 @@
+<!-- 
+================================================================================
+INHOUDSTAFEL & STRUCTUUR OVERZICHT
+================================================================================
+
+1. CSS (STYLING)
+   - Sectie 1: Basis & Layout Configuratie
+   - Sectie 2: Hoofd Grid Roosters (Teams Indeling)
+   - Sectie 3: Weergave Layouts Binnen Een Team (Live vs Niet-Live)
+   - Sectie 4: Sub-componenten (Live Header & Enkelmatchen Grid)
+   - Sectie 5: Bedienknoppen (Volledig Scherm & Homelink)
+   - Sectie 6: Tabel-kolommen & Utility Classes
+
+2. HTML (STRUCTUUR)
+   - Grid-container (Teams A t/m K)
+   - Control-buttons (Home & Fullscreen knoppen)
+
+3. JAVASCRIPT (FUNCTIONALITEIT)
+   - Sectie 1:  Configuratie & Constanten (API, Timers, Teams)
+   - Sectie 2:  Globale Variabelen & Applicatiestatus (State & Caches)
+   - Sectie 3:  DOM Selectors & Basis Elementen
+   - Sectie 4:  Hulpfuncties (Datum, Formattering & LocalStorage)
+   - Sectie 5:  Team- en Match-naam Logica (Opschonen & Matchen)
+   - Sectie 6:  Match Filtering, Deduplicatie & Statuscontroles
+   - Sectie 7:  Snapshots & Highlighting van Wijzigingen
+   - Sectie 8:  SOAP API Calls & XML Parsing
+   - Sectie 9:  HTML Renderers (Klassement, Live & Niet-Live Views)
+   - Sectie 10: Data Ophalen & Verversingscyclus (Polling & Fetching)
+   - Sectie 11: Schaalberekening & Fullscreen Controle
+   - Sectie 12: Initialisatie & Event Listeners
+================================================================================
+-->
+
 <!doctype html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Live Uitslagen</title>
+
     <style>
+      /* ==========================================================================
+         1. BASIS & LAYOUT CONFIGURATIE
+         ========================================================================== */
       #liveUitslagenRoot {
         --base-font-px: 18.4;
         --layout-scale: 1;
@@ -19,6 +56,9 @@
         background-color: #ccc;
       }
 
+      /* ==========================================================================
+         2. HOOFD GRID ROOSTERS (TEAMS INDELING)
+         ========================================================================== */
       #liveUitslagenRoot .grid-container {
         display: flex;
         flex-direction: column;
@@ -58,6 +98,10 @@
         min-width: 0;
       }
 
+      /* ==========================================================================
+         3. WEERGAVE LAYOUTS BINNEN EEN TEAM (LIVE VS NIET-LIVE)
+         ========================================================================== */
+      /* Live weergave (3 rijen: spelers/stand, enkelmatchen, nevenmatchen) */
       #liveUitslagenRoot .view-live {
         display: grid;
         grid-template-rows: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1.05fr);
@@ -93,6 +137,7 @@
         overflow: hidden;
       }
 
+      /* Niet-live weergave (boven: klassement, onder: komende matchen) */
       #liveUitslagenRoot .view-non-live {
         display: grid;
         grid-template-rows: 1fr 1fr;
@@ -115,6 +160,87 @@
         overflow: hidden;
       }
 
+      /* ==========================================================================
+         4. SUB-COMPONENTEN (LIVE HEADER & ENKELMATCHEN GRID)
+         ========================================================================== */
+      #liveUitslagenRoot .live-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 2px;
+        column-gap: 4px;
+      }
+
+      #liveUitslagenRoot .live-badge {
+        background-color: #c00000;
+        color: #fff;
+        font-size: 0.7em;
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-weight: bold;
+      }
+
+      #liveUitslagenRoot .singles-4col-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      #liveUitslagenRoot .singles-col {
+        display: grid;
+        grid-template-rows: repeat(4, 1fr);
+        row-gap: 3px;
+        height: 100%;
+        box-sizing: border-box;
+        padding: 0 4px;
+        border-right: 1px solid #ddd;
+      }
+
+      #liveUitslagenRoot .singles-col:last-child {
+        border-right: none;
+      }
+
+      #liveUitslagenRoot .singles-row-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f2f2f2;
+        padding: 0;
+        width: 100%;
+      }
+
+      #liveUitslagenRoot .singles-row-item:last-child {
+        border-bottom: none;
+      }
+
+      #liveUitslagenRoot .score-win {
+        color: #0a8f2e;
+        font-weight: bold;
+      }
+
+      #liveUitslagenRoot .score-loss {
+        color: #c00000;
+        font-weight: bold;
+      }
+
+      #liveUitslagenRoot .score-highlight-win {
+        background-color: #d4edda;
+        border-radius: 2px;
+        padding: 0 2px;
+      }
+
+      #liveUitslagenRoot .score-highlight-loss {
+        background-color: #f8d7da;
+        border-radius: 2px;
+        padding: 0 2px;
+      }
+
+      /* ==========================================================================
+         5. BEDIENTONEN (VOLLEDIG SCHERM & HOMELINK)
+         ========================================================================== */
       #liveUitslagenRoot .control-buttons {
         position: absolute;
         bottom: 12px;
@@ -147,6 +273,53 @@
         width: 24px;
         height: 24px;
         fill: white;
+      }
+
+      /* ==========================================================================
+         6. TABEL-KOLOMMEN & UTILITY CLASSES
+         ========================================================================== */
+      #liveUitslagenRoot .grid-col-upcoming {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 2.5em;
+        column-gap: 0.25em;
+      }
+
+      #liveUitslagenRoot .grid-col-next {
+        display: grid;
+        grid-template-columns: 2.6em minmax(0, 1fr);
+        column-gap: 0.22em;
+      }
+
+      #liveUitslagenRoot .grid-col-player-stats {
+        display: grid;
+        grid-template-columns: 1.1em minmax(0, 1fr) 1.5em 1.8em;
+        column-gap: 0.25em;
+      }
+
+      #liveUitslagenRoot .grid-col-player-basic {
+        display: grid;
+        grid-template-columns: 1.1em minmax(0, 1fr) 1.5em;
+        column-gap: 0.25em;
+      }
+
+      #liveUitslagenRoot .grid-col-ranking {
+        display: grid;
+        grid-template-columns:
+          1.5em minmax(0, 1fr)
+          1.2em 1.2em 1.2em 1.2em 1.6em;
+        align-items: center;
+        column-gap: 0.05em;
+      }
+
+      #liveUitslagenRoot .grid-col-ranking > span:first-child {
+        padding-right: 4px;
+      }
+
+      #liveUitslagenRoot .scroll-block {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
       }
 
       #liveUitslagenRoot .text-left {
@@ -199,95 +372,12 @@
       #liveUitslagenRoot .ws-nowrap {
         white-space: nowrap;
       }
-
-      #liveUitslagenRoot .grid-col-upcoming {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 2.5em;
-        column-gap: 0.25em;
-      }
-      #liveUitslagenRoot .grid-col-next {
-        display: grid;
-        grid-template-columns: 2.6em minmax(0, 1fr);
-        column-gap: 0.22em;
-      }
-      #liveUitslagenRoot .grid-col-player-stats {
-        display: grid;
-        grid-template-columns: 1.1em minmax(0, 1fr) 1.5em 1.8em;
-        column-gap: 0.25em;
-      }
-      #liveUitslagenRoot .grid-col-player-basic {
-        display: grid;
-        grid-template-columns: 1.1em minmax(0, 1fr) 1.5em;
-        column-gap: 0.25em;
-      }
-      #liveUitslagenRoot .grid-col-ranking {
-        display: grid;
-        grid-template-columns:
-          1.5em minmax(0, 1fr)
-          1.2em 1.2em 1.2em 1.2em 1.6em;
-        align-items: center;
-        column-gap: 0.05em;
-      }
-      #liveUitslagenRoot .grid-col-ranking > span:first-child {
-        padding-right: 4px;
-      }
-      #liveUitslagenRoot .scroll-block {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        box-sizing: border-box;
-      }
-
-      #liveUitslagenRoot .live-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 2px solid #ddd;
-        padding-bottom: 2px;
-        column-gap: 4px;
-      }
-      #liveUitslagenRoot .live-badge {
-        background-color: #c00000;
-        color: #fff;
-        font-size: 0.7em;
-        padding: 1px 4px;
-        border-radius: 3px;
-        font-weight: bold;
-      }
-      #liveUitslagenRoot .singles-4col-container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-      }
-      #liveUitslagenRoot .singles-col {
-        display: grid;
-        grid-template-rows: repeat(4, 1fr);
-        row-gap: 3px;
-        height: 100%;
-        box-sizing: border-box;
-        padding: 0 4px;
-        border-right: 1px solid #ddd;
-      }
-      #liveUitslagenRoot .singles-col:last-child {
-        border-right: none;
-      }
-      #liveUitslagenRoot .singles-row-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #f2f2f2;
-        padding: 0;
-        width: 100%;
-      }
-      #liveUitslagenRoot .singles-row-item:last-child {
-        border-bottom: none;
-      }
     </style>
   </head>
   <body>
+    <!-- Hoofdcontainer voor het scherm -->
     <div id="liveUitslagenRoot">
+      <!-- Grid met teamcellen (A t/m E boven, F t/m K onder) -->
       <div class="grid-container" id="gridContainer">
         <div class="grid-row-top">
           <div class="grid-item" data-team="A">A</div>
@@ -306,11 +396,49 @@
         </div>
       </div>
 
-      <script>
-        const FORCE_MATCHES_LIVE = false;
+      <!-- Knoppen rechtsonderin -->
+      <div class="control-buttons">
+        <a
+          class="control-btn"
+          href="https://www.ttczandvoorde.be"
+          title="Terug naar website"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+          </svg>
+        </a>
+        <button class="control-btn" id="fullscreenBtn" title="Fullscreen (F11)">
+          <svg
+            id="fullscreenIcon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+            />
+          </svg>
+          <svg
+            id="exitFullscreenIcon"
+            style="display: none"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"
+            />
+          </svg>
+        </button>
+      </div>
 
+      <script>
+        /* ==========================================================================
+           SECTIE 1: CONFIGURATIE & CONSTANTEN
+           ========================================================================== */
+        const FORCE_MATCHES_LIVE = false; // Forceert live weergave voor testdoeleinden
         const SOAP_ENDPOINT = "https://api.vttl.be/index.php?s=vttl";
         const STANDINGS_HIGHLIGHT_KEY = "vttl-standings-highlight-v1";
+
+        // Polling- en cache-tijden (in milliseconden)
         const MATCHES_POLL_INTERVAL_MS = 10 * 1000;
         const TEAM_CACHE_MS = 60 * 60 * 1000;
         const MATCH_FETCH_DAYS_BACK = 5;
@@ -334,12 +462,23 @@
           "K",
         ];
 
+        // Schermresolutie referentie voor dynamisch schalen
+        const DESIGN_WIDTH = 1920;
+        const DESIGN_HEIGHT = 1080;
+        const MIN_LAYOUT_SCALE = 0.62;
+        const MAX_LAYOUT_SCALE = 1.15;
+
+        /* ==========================================================================
+           SECTIE 2: GLOBALE VARIABELEN & APPLICATIESTATUS
+           ========================================================================== */
         let standingsRefreshInProgress = false;
         let matchesRefreshInProgress = false;
         let standingsRefreshTimeoutId = null;
         let matchesRefreshIntervalId = null;
+
         let cachedClubTeams = null;
         let cachedClubTeamsFetchedAt = 0;
+
         let previousStandingsByLetter = {};
         let previousSinglesByLetter = {};
         let singlesHighlightUntil = {};
@@ -347,7 +486,29 @@
         let currentOpponentByLetter = {};
         let lastRankingByLetter = {};
         let lastMatchesDataByLetter = {};
+        let autoFullscreenAttempted = false;
 
+        /* ==========================================================================
+           SECTIE 3: DOM SELECTORS & BASIS ELEMENTEN
+           ========================================================================== */
+        const rootEl = document.getElementById("liveUitslagenRoot");
+        const fullscreenBtn = rootEl?.querySelector("#fullscreenBtn");
+        const fullscreenIcon = rootEl?.querySelector("#fullscreenIcon");
+        const exitFullscreenIcon = rootEl?.querySelector("#exitFullscreenIcon");
+
+        function getGridElement() {
+          return rootEl?.querySelector("#gridContainer") || null;
+        }
+
+        function getTeamElement(letter) {
+          return (
+            rootEl?.querySelector(`.grid-item[data-team="${letter}"]`) || null
+          );
+        }
+
+        /* ==========================================================================
+           SECTIE 4: HULPFUNCTIES (DATUM, FORMATTERING & LOCALSTORAGE)
+           ========================================================================== */
         function getRefreshIntervalMs() {
           const hour = new Date().getHours();
           return hour >= 23 ? LATE_NIGHT_REFRESH_MS : HOURLY_REFRESH_MS;
@@ -368,11 +529,9 @@
               standingsHighlightByLetter = {};
               return;
             }
-
             const parsed = JSON.parse(raw);
-            const today = getTodayKey();
             standingsHighlightByLetter =
-              parsed?.date === today ? parsed.highlights || {} : {};
+              parsed?.date === getTodayKey() ? parsed.highlights || {} : {};
           } catch {
             standingsHighlightByLetter = {};
           }
@@ -390,18 +549,485 @@
           } catch {}
         }
 
-        const rootEl = document.getElementById("liveUitslagenRoot");
-
-        function getGridElement() {
-          return rootEl?.querySelector("#gridContainer") || null;
+        function parseApiDate(dateString) {
+          if (!dateString) return null;
+          const parts = dateString.split("-").map(Number);
+          if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+          return new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
         }
 
-        function getTeamElement(letter) {
+        function formatApiDate(date) {
+          const y = date.getFullYear();
+          const m = String(date.getMonth() + 1).padStart(2, "0");
+          const d = String(date.getDate()).padStart(2, "0");
+          return `${y}-${m}-${d}`;
+        }
+
+        function getMatchFetchDateWindow() {
+          const now = new Date();
+          const from = new Date(now);
+          const to = new Date(now);
+          from.setDate(from.getDate() - MATCH_FETCH_DAYS_BACK);
+          to.setDate(to.getDate() + MATCH_FETCH_DAYS_FORWARD);
+          return { from: formatApiDate(from), to: formatApiDate(to) };
+        }
+
+        function formatShortDate(dateString) {
+          const parsed = parseApiDate(dateString);
+          if (!parsed) return dateString;
+          const day = String(parsed.getDate()).padStart(2, "0");
+          const month = String(parsed.getMonth() + 1).padStart(2, "0");
+          return `${day}/${month}`;
+        }
+
+        function normalizeScore(score) {
+          const cleaned = String(score || "").trim();
+          if (!cleaned) return "0-0";
+          const normalized = cleaned.replace(/\s*[-:]\s*/, "-");
+          return normalized === "-" ? "0-0" : normalized;
+        }
+
+        function formatOrdinal(numericValue) {
+          const n = Number.parseInt(numericValue, 10);
+          if (!Number.isFinite(n)) return "";
+          return n === 1 ? "1ste" : `${n}de`;
+        }
+
+        function formatDivisionName(divisionName) {
+          const trimmed = String(divisionName || "").trim();
+          if (!trimmed) return "";
+
+          const normalized = trimmed
+            .replace(/[\u2013\u2014]/g, "-")
+            .replace(/\s*-\s*/g, " - ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+          if (/^regionvttl$/i.test(normalized)) return "Landelijke";
+
+          const reeksMatch = normalized.match(/reeks\s*([a-z])/i);
+          const afdelingMatch = normalized.match(/afdeling\s*(\d+)\s*([a-z])/i);
+
+          if (reeksMatch && /regionvttl/i.test(normalized)) {
+            return `Landelijke ${reeksMatch[1].toUpperCase()}`;
+          }
+
+          if (afdelingMatch) {
+            const level = formatOrdinal(afdelingMatch[1]);
+            const reeksLetter = afdelingMatch[2].toUpperCase();
+            if (/nationaal/i.test(normalized))
+              return `${level} nationale ${reeksLetter}`;
+            if (/\bprov\b|\bprovinciaal\b|\bprovinciale\b/i.test(normalized))
+              return `${level} provinciale ${reeksLetter}`;
+            if (/regionvttl/i.test(normalized))
+              return `Landelijke ${reeksLetter}`;
+          }
+
+          return normalized;
+        }
+
+        function getErrorMessage(error) {
+          if (error instanceof Error) return error.message || String(error);
+          try {
+            return JSON.stringify(error);
+          } catch {
+            return String(error);
+          }
+        }
+
+        /* ==========================================================================
+           SECTIE 5: TEAM- EN MATCH-NAAM LOGICA
+           ========================================================================== */
+        function normalizeTeamName(teamName) {
+          let cleaned = teamName;
+
+          cleaned = cleaned
+            .replace(/\bde\s+woudpalet\s+houthulst\b/gi, "Houthulst")
+            .replace(/\bde\s+woudpalet\b/gi, "Houthulst");
+
+          const patternsToRemove = [
+            /\b(koninklijke|kon\.?)\b/gi,
+            /\bK\.?\s*T\.?\s*T\.?\s*C\.?\b/gi,
+            /\bT\.?\s*T\.?\s*C\.?\b/gi,
+            /\bT\.?\s*T\.?\b/gi,
+            /\bK\.?\s*T\.?\s*T\.?\s*V\.?\b/gi,
+            /\bT\.?\s*T\.?\s*V\.?\b/gi,
+            /\bT\.?\s*T\.?\s*K\.?\b/gi,
+            /\bT\.?\s*T\.?\s*W\.?\b/gi,
+            /\bwoudpalet\b/gi,
+            /\bvzw\b/gi,
+          ];
+
+          for (const pattern of patternsToRemove) {
+            cleaned = cleaned.replace(pattern, " ");
+          }
+
+          return cleaned
+            .replace(/\s*\.\s*/g, " ")
+            .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")
+            .replace(/\s{2,}/g, " ")
+            .trim();
+        }
+
+        function shortenOverviewTeamName(teamName) {
+          const normalized = normalizeTeamName(teamName);
+          const trimmed = String(normalized || "").trim();
+          if (!trimmed) return "";
+
+          const parts = trimmed.split(/\s+/);
+          if (parts.length >= 2) {
+            const suffix = parts[parts.length - 1];
+            const base = parts.slice(0, -1).join(" ");
+            let shortBase = base;
+
+            if (/^(sint|st)-/i.test(base)) {
+              shortBase = base.split(/\s+/)[0] || base;
+            } else if (/^(sint|st|la)\s+/i.test(base)) {
+              shortBase = base.split(/\s+/).slice(0, 2).join(" ") || base;
+            } else {
+              shortBase = base.split(/[-\s]+/)[0] || base;
+            }
+
+            return `${shortBase} ${suffix}`.trim();
+          }
+
+          if (/^(sint|st)-/i.test(trimmed))
+            return trimmed.split(/\s+/)[0] || trimmed;
+          if (/^(sint|st|la)\s+/i.test(trimmed))
+            return trimmed.split(/\s+/).slice(0, 2).join(" ") || trimmed;
+
+          return trimmed.split(/[-\s]+/)[0] || trimmed;
+        }
+
+        function isTeamLetterMatch(teamName, letter) {
+          const normalized = normalizeTeamName(teamName).toUpperCase();
+          const wanted = letter.toUpperCase();
+          return normalized === wanted || normalized.endsWith(` ${wanted}`);
+        }
+
+        function isSameTeam(name1, name2) {
+          if (!name1 || !name2) return false;
+
+          const clean = (s) =>
+            normalizeTeamName(s)
+              .toLowerCase()
+              .replace(/[-_/]/g, " ") // Koppeltekens/slashes worden spaties
+              .replace(/\b(sint|st\.|st|ste)\b/g, "st") // Maakt St, Sint en St. gelijk
+              .replace(/\b(de|het|la|le|les)\b/g, "") // Verwijdert lidwoorden
+              .replace(/\b(se|e)\b(?=\s|$)/g, "") // Brugse -> Brug, Ieperse -> Ieper
+              .replace(/\s+/g, " ")
+              .trim();
+
+          const a = clean(name1);
+          const b = clean(name2);
+
+          if (a === b) return true;
+
+          const partsA = a.split(/\s+/);
+          const partsB = b.split(/\s+/);
+
+          // De teamletter (laatste deel: A, B, C...) moet altijd exact kloppen
+          const letterA = partsA[partsA.length - 1];
+          const letterB = partsB[partsB.length - 1];
+          if (letterA !== letterB) {
+            return false;
+          }
+
+          const clubA = partsA.slice(0, -1).join(" ").trim();
+          const clubB = partsB.slice(0, -1).join(" ").trim();
+
+          if (!clubA || !clubB) return false;
+
+          // 1. Directe overlap (bv. "Rooigem Gent" vs "Rooigem Gent")
+          if (
+            clubA === clubB ||
+            clubA.includes(clubB) ||
+            clubB.includes(clubA)
+          ) {
+            return true;
+          }
+
+          // 2. Woord-voor-woord controle (als minstens 1 belangrijk kernwoord matcht)
+          const wordsA = clubA.split(" ").filter((w) => w.length > 2);
+          const wordsB = clubB.split(" ").filter((w) => w.length > 2);
+          const hasCommonWord = wordsA.some((w) => wordsB.includes(w));
+          if (hasCommonWord) {
+            return true;
+          }
+
+          // 3. Speciale uitzonderingen (zoals fusieclubs of naamsveranderingen)
+          if (
+            (clubA.includes("leie") && clubB.includes("lauwe")) ||
+            (clubB.includes("leie") && clubA.includes("lauwe"))
+          ) {
+            return true;
+          }
+
+          return false;
+        }
+        function getOpponentTeamName(match, teamLetter) {
+          if (!match) return null;
+          const isHome =
+            match.homeClub === "WVL109" &&
+            isTeamLetterMatch(match.homeTeam, teamLetter);
           return (
-            rootEl?.querySelector(`.grid-item[data-team="${letter}"]`) || null
+            normalizeTeamName(isHome ? match.awayTeam : match.homeTeam) || null
           );
         }
 
+        /* ==========================================================================
+           SECTIE 6: MATCH FILTERING, DEDUPLICATIE & STATUSCONTROLES
+           ========================================================================== */
+        function getMatchDedupKey(match) {
+          const safeMatch =
+            match && typeof match === "object" ? match : Object.create(null);
+          return [
+            String(safeMatch.date || "").trim(),
+            String(safeMatch.homeClub || "").trim(),
+            String(safeMatch.homeTeam || "")
+              .trim()
+              .toUpperCase(),
+            String(safeMatch.awayClub || "").trim(),
+            String(safeMatch.awayTeam || "")
+              .trim()
+              .toUpperCase(),
+          ].join("|");
+        }
+
+        function dedupeMatches(matches) {
+          const seen = new Set();
+          const unique = [];
+          for (const match of matches || []) {
+            if (!match || typeof match !== "object") continue;
+            const key = getMatchDedupKey(match);
+            if (!seen.has(key)) {
+              seen.add(key);
+              unique.push(match);
+            }
+          }
+          return unique;
+        }
+
+        function isSinglePlayed(single) {
+          if (!single || typeof single !== "object") return false;
+          const homeSets = Number.parseInt(single.homeSetCount ?? "0", 10) || 0;
+          const awaySets = Number.parseInt(single.awaySetCount ?? "0", 10) || 0;
+          return homeSets > 0 || awaySets > 0;
+        }
+
+        function isMatchCurrentlyActive(match) {
+          if (FORCE_MATCHES_LIVE) return true;
+          if (!match) return false;
+
+          const hScore = Number.parseInt(match.homeScore ?? "0", 10) || 0;
+          const aScore = Number.parseInt(match.awayScore ?? "0", 10) || 0;
+          if (hScore + aScore >= 16) return false;
+
+          const rawScore = normalizeScore(match.score);
+          const parts = rawScore
+            .split("-")
+            .map((s) => Number.parseInt(s.trim(), 10) || 0);
+          if (parts.length === 2 && parts[0] + parts[1] >= 16) return false;
+
+          const hasPlayers =
+            (match.homePlayers && match.homePlayers.length > 0) ||
+            (match.awayPlayers && match.awayPlayers.length > 0);
+          const isDone =
+            String(match.isCompleted).toLowerCase() === "true" ||
+            String(match.isCompleted) === "1";
+
+          return Boolean(hasPlayers && !isDone);
+        }
+
+        function getUpcomingWeekMatches(matches) {
+          const reference = new Date();
+          const candidates = dedupeMatches(matches)
+            .map((match) => ({
+              ...match,
+              parsedDate: parseApiDate(match.date),
+              completed:
+                String(match.isCompleted).toLowerCase() === "true" ||
+                String(match.isCompleted) === "1",
+            }))
+            .filter((match) => match.parsedDate)
+            .sort((a, b) => a.parsedDate - b.parsedDate);
+
+          const recentMatches = candidates.filter(
+            (match) => match.parsedDate <= reference,
+          );
+          const mostRecentMatch = recentMatches[recentMatches.length - 1];
+
+          if (mostRecentMatch) {
+            const daysDiff =
+              (reference - mostRecentMatch.parsedDate) / (1000 * 60 * 60 * 24);
+            if (daysDiff <= 4) {
+              return candidates.filter(
+                (match) => match.weekName === mostRecentMatch.weekName,
+              );
+            }
+          }
+
+          const next = candidates.find(
+            (match) => match.parsedDate >= reference && !match.completed,
+          );
+          if (!next) return [];
+
+          return candidates
+            .filter((match) => match.weekName === next.weekName)
+            .sort((a, b) => a.parsedDate - b.parsedDate);
+        }
+
+        function getNextTeamMatchdays(matches, teamLetter, count = 5) {
+          const reference = new Date();
+          return dedupeMatches(matches)
+            .map((match) => ({
+              ...match,
+              parsedDate: parseApiDate(match.date),
+              completed:
+                String(match.isCompleted).toLowerCase() === "true" ||
+                String(match.isCompleted) === "1",
+            }))
+            .filter((match) => {
+              if (
+                !match.parsedDate ||
+                match.completed ||
+                match.parsedDate < reference
+              )
+                return false;
+              const homeIsOurTeam =
+                match.homeClub === "WVL109" &&
+                isTeamLetterMatch(match.homeTeam, teamLetter);
+              const awayIsOurTeam =
+                match.awayClub === "WVL109" &&
+                isTeamLetterMatch(match.awayTeam, teamLetter);
+              return homeIsOurTeam || awayIsOurTeam;
+            })
+            .sort((a, b) => a.parsedDate - b.parsedDate)
+            .slice(0, count);
+        }
+
+        function getCurrentTeamMatch(matches, teamLetter) {
+          const reference = new Date();
+          const dayOfWeek = reference.getDay();
+          const showRecentMatch = dayOfWeek >= 6 || dayOfWeek <= 2;
+
+          const allTeamMatches = dedupeMatches(matches)
+            .map((match) => ({
+              ...match,
+              parsedDate: parseApiDate(match.date),
+            }))
+            .filter((match) => {
+              if (!match.parsedDate) return false;
+              const homeIsOurTeam =
+                match.homeClub === "WVL109" &&
+                isTeamLetterMatch(match.homeTeam, teamLetter);
+              const awayIsOurTeam =
+                match.awayClub === "WVL109" &&
+                isTeamLetterMatch(match.awayTeam, teamLetter);
+              return homeIsOurTeam || awayIsOurTeam;
+            });
+
+          if (showRecentMatch) {
+            const pastMatches = allTeamMatches
+              .filter((match) => match.parsedDate <= reference)
+              .sort((a, b) => b.parsedDate - a.parsedDate);
+
+            const recentMatch = pastMatches[0];
+            if (recentMatch) {
+              const daysDiff =
+                (reference - recentMatch.parsedDate) / (1000 * 60 * 60 * 24);
+              if (daysDiff <= 4) return recentMatch;
+            }
+          }
+
+          const futureMatches = allTeamMatches
+            .filter((match) => match.parsedDate >= reference)
+            .sort((a, b) => a.parsedDate - b.parsedDate);
+
+          return futureMatches[0] || null;
+        }
+
+        /* ==========================================================================
+           SECTIE 7: SNAPSHOTS & HIGHLIGHTING VAN WIJZIGINGEN
+           ========================================================================== */
+        function buildStandingsSnapshot(entries) {
+          const snapshot = {};
+          for (const entry of entries) {
+            snapshot[entry.teamName] = String(entry.points);
+          }
+          return snapshot;
+        }
+
+        function updateStandingsHighlightState(letter, entries) {
+          const nextSnapshot = buildStandingsSnapshot(entries);
+          const prevSnapshot = previousStandingsByLetter[letter];
+
+          if (prevSnapshot) {
+            if (!standingsHighlightByLetter[letter])
+              standingsHighlightByLetter[letter] = {};
+            for (const [teamName, points] of Object.entries(nextSnapshot)) {
+              if (
+                Object.prototype.hasOwnProperty.call(prevSnapshot, teamName) &&
+                prevSnapshot[teamName] !== points
+              ) {
+                standingsHighlightByLetter[letter][teamName] = true;
+              }
+            }
+            saveStandingsHighlightState();
+          }
+          previousStandingsByLetter[letter] = nextSnapshot;
+        }
+
+        function buildSinglesSnapshot(match, teamLetter) {
+          const base = Array.from({ length: 16 }, () => "-|0-0");
+          if (!match) return base;
+
+          const isHome =
+            match.homeClub === "WVL109" &&
+            isTeamLetterMatch(match.homeTeam, teamLetter);
+          const singles = match.individualMatches || [];
+
+          for (let idx = 0; idx < 16; idx++) {
+            const pos = idx + 1;
+            const single = singles.find((s) => s.position === pos);
+            if (!single) continue;
+
+            const ourPos = isHome
+              ? single.homePlayerIndex
+              : single.awayPlayerIndex;
+            const oppPos = isHome
+              ? single.awayPlayerIndex
+              : single.homePlayerIndex;
+            const score = isHome
+              ? `${single.homeSetCount}-${single.awaySetCount}`
+              : `${single.awaySetCount}-${single.homeSetCount}`;
+            base[idx] = `${ourPos}-${oppPos}|${score}`;
+          }
+
+          return base;
+        }
+
+        function updateSinglesHighlightState(letter, currentMatch) {
+          const now = Date.now();
+          const nextSnapshot = buildSinglesSnapshot(currentMatch, letter);
+          const prevSnapshot = previousSinglesByLetter[letter];
+
+          if (prevSnapshot) {
+            if (!singlesHighlightUntil[letter])
+              singlesHighlightUntil[letter] = {};
+            for (let i = 0; i < nextSnapshot.length; i++) {
+              if (prevSnapshot[i] !== nextSnapshot[i]) {
+                singlesHighlightUntil[letter][i + 1] =
+                  now + SINGLES_HIGHLIGHT_MS;
+              }
+            }
+          }
+          previousSinglesByLetter[letter] = nextSnapshot;
+        }
+
+        /* ==========================================================================
+           SECTIE 8: SOAP API CALLS & XML PARSING
+           ========================================================================== */
         function getElementsByLocalName(root, localName) {
           return Array.from(root.getElementsByTagName("*")).filter(
             (node) => node.localName === localName,
@@ -412,11 +1038,7 @@
           const directChild = Array.from(element.children).find(
             (child) => child.localName === tagName,
           );
-
-          if (directChild?.textContent) {
-            return directChild.textContent.trim();
-          }
-
+          if (directChild?.textContent) return directChild.textContent.trim();
           const descendant = getElementsByLocalName(element, tagName)[0];
           return descendant?.textContent?.trim() || fallback;
         }
@@ -438,10 +1060,8 @@
             body: envelope,
           });
 
-          if (!response.ok) {
+          if (!response.ok)
             throw new Error(`SOAP ${action} failed: ${response.status}`);
-          }
-
           return response.text();
         }
 
@@ -465,7 +1085,6 @@
               divisionName: getDirectChildText(entry, "DivisionName"),
             });
           }
-
           return teams;
         }
 
@@ -493,7 +1112,6 @@
               points: getDirectChildText(entry, "Points", "0"),
             });
           }
-
           return ranking;
         }
 
@@ -525,7 +1143,6 @@
 
           for (const entry of matchEntries) {
             const details = getElementsByLocalName(entry, "MatchDetails")[0];
-
             let homePlayers = [];
             let awayPlayers = [];
             let individualMatches = [];
@@ -615,534 +1232,26 @@
               individualMatches,
             });
           }
-
           return matches;
         }
 
-        function normalizeTeamName(teamName) {
-          let cleaned = teamName;
-
-          cleaned = cleaned
-            .replace(/\bde\s+woudpalet\s+houthulst\b/gi, "Houthulst")
-            .replace(/\bde\s+woudpalet\b/gi, "Houthulst");
-
-          const patternsToRemove = [
-            /\bK\.?\s*T\.?\s*T\.?\s*C\.?\b/gi,
-            /\bT\.?\s*T\.?\s*C\.?\b/gi,
-            /\bT\.?\s*T\.?\b/gi,
-            /\bK\.?\s*T\.?\s*T\.?\s*V\.?\b/gi,
-            /\bT\.?\s*T\.?\s*V\.?\b/gi,
-            /\bT\.?\s*T\.?\s*K\.?\b/gi,
-            /\bT\.?\s*T\.?\s*W\.?\b/gi,
-            /\bwoudpalet\b/gi,
-            /\bvzw\b/gi,
-          ];
-
-          for (const pattern of patternsToRemove) {
-            cleaned = cleaned.replace(pattern, " ");
-          }
-
-          return cleaned
-            .replace(/\s*\.\s*/g, " ")
-            .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")
-            .replace(/\s{2,}/g, " ")
-            .trim();
-        }
-
-        function shortenOverviewTeamName(teamName) {
-          const normalized = normalizeTeamName(teamName);
-          const trimmed = String(normalized || "").trim();
-          if (!trimmed) {
-            return "";
-          }
-
-          const parts = trimmed.split(/\s+/);
-          if (parts.length >= 2) {
-            const suffix = parts[parts.length - 1];
-            const base = parts.slice(0, -1).join(" ");
-            let shortBase = base;
-
-            if (/^(sint|st)-/i.test(base)) {
-              shortBase = base.split(/\s+/)[0] || base;
-            } else if (/^(sint|st|la)\s+/i.test(base)) {
-              shortBase = base.split(/\s+/).slice(0, 2).join(" ") || base;
-            } else {
-              shortBase = base.split(/[-\s]+/)[0] || base;
-            }
-
-            return `${shortBase} ${suffix}`.trim();
-          }
-
-          if (/^(sint|st)-/i.test(trimmed)) {
-            return trimmed.split(/\s+/)[0] || trimmed;
-          }
-          if (/^(sint|st|la)\s+/i.test(trimmed)) {
-            return trimmed.split(/\s+/).slice(0, 2).join(" ") || trimmed;
-          }
-
-          return trimmed.split(/[-\s]+/)[0] || trimmed;
-        }
-
-        function parseApiDate(dateString) {
-          if (!dateString) {
-            return null;
-          }
-
-          const parts = dateString.split("-").map(Number);
-          if (parts.length !== 3 || parts.some(Number.isNaN)) {
-            return null;
-          }
-
-          return new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
-        }
-
-        function formatApiDate(date) {
-          const y = date.getFullYear();
-          const m = String(date.getMonth() + 1).padStart(2, "0");
-          const d = String(date.getDate()).padStart(2, "0");
-          return `${y}-${m}-${d}`;
-        }
-
-        function getMatchFetchDateWindow() {
-          const now = new Date();
-          const from = new Date(now);
-          const to = new Date(now);
-          from.setDate(from.getDate() - MATCH_FETCH_DAYS_BACK);
-          to.setDate(to.getDate() + MATCH_FETCH_DAYS_FORWARD);
-
-          return {
-            from: formatApiDate(from),
-            to: formatApiDate(to),
-          };
-        }
-
-        function formatShortDate(dateString) {
-          const parsed = parseApiDate(dateString);
-          if (!parsed) {
-            return dateString;
-          }
-
-          const day = String(parsed.getDate()).padStart(2, "0");
-          const month = String(parsed.getMonth() + 1).padStart(2, "0");
-          return `${day}/${month}`;
-        }
-
-        function normalizeScore(score) {
-          const cleaned = String(score || "").trim();
-          if (!cleaned) {
-            return "0-0";
-          }
-
-          const normalized = cleaned.replace(/\s*[-:]\s*/, "-");
-          return normalized === "-" ? "0-0" : normalized;
-        }
-
-        function buildStandingsSnapshot(entries) {
-          const snapshot = {};
-          for (const entry of entries) {
-            snapshot[entry.teamName] = String(entry.points);
-          }
-          return snapshot;
-        }
-
-        function updateStandingsHighlightState(letter, entries) {
-          const nextSnapshot = buildStandingsSnapshot(entries);
-          const prevSnapshot = previousStandingsByLetter[letter];
-
-          if (prevSnapshot) {
-            if (!standingsHighlightByLetter[letter]) {
-              standingsHighlightByLetter[letter] = {};
-            }
-
-            for (const [teamName, points] of Object.entries(nextSnapshot)) {
-              if (
-                Object.prototype.hasOwnProperty.call(prevSnapshot, teamName) &&
-                prevSnapshot[teamName] !== points
-              ) {
-                standingsHighlightByLetter[letter][teamName] = true;
-              }
-            }
-
-            saveStandingsHighlightState();
-          }
-
-          previousStandingsByLetter[letter] = nextSnapshot;
-        }
-
-        function isSinglePlayed(single) {
-          if (!single || typeof single !== "object") {
-            return false;
-          }
-
-          const homeSets = Number.parseInt(single.homeSetCount ?? "0", 10) || 0;
-          const awaySets = Number.parseInt(single.awaySetCount ?? "0", 10) || 0;
-          return homeSets > 0 || awaySets > 0;
-        }
-
-        function buildSinglesSnapshot(match, teamLetter) {
-          const base = Array.from({ length: 16 }, () => "-|0-0");
-          if (!match) {
-            return base;
-          }
-
-          const isHome =
-            match.homeClub === "WVL109" &&
-            isTeamLetterMatch(match.homeTeam, teamLetter);
-          const singles = match.individualMatches || [];
-
-          for (let idx = 0; idx < 16; idx++) {
-            const pos = idx + 1;
-            const single = singles.find((s) => s.position === pos);
-            if (!single) {
-              continue;
-            }
-
-            const ourPos = isHome
-              ? single.homePlayerIndex
-              : single.awayPlayerIndex;
-            const oppPos = isHome
-              ? single.awayPlayerIndex
-              : single.homePlayerIndex;
-            const score = isHome
-              ? `${single.homeSetCount}-${single.awaySetCount}`
-              : `${single.awaySetCount}-${single.homeSetCount}`;
-
-            base[idx] = `${ourPos}-${oppPos}|${score}`;
-          }
-
-          return base;
-        }
-
-        function updateSinglesHighlightState(letter, currentMatch) {
+        async function fetchTeamsForClubCached(club) {
           const now = Date.now();
-          const nextSnapshot = buildSinglesSnapshot(currentMatch, letter);
-          const prevSnapshot = previousSinglesByLetter[letter];
-
-          if (prevSnapshot) {
-            if (!singlesHighlightUntil[letter]) {
-              singlesHighlightUntil[letter] = {};
-            }
-
-            for (let i = 0; i < nextSnapshot.length; i++) {
-              if (prevSnapshot[i] !== nextSnapshot[i]) {
-                singlesHighlightUntil[letter][i + 1] =
-                  now + SINGLES_HIGHLIGHT_MS;
-              }
-            }
-          }
-
-          previousSinglesByLetter[letter] = nextSnapshot;
-        }
-
-        function getOpponentTeamName(match, teamLetter) {
-          if (!match) {
-            return null;
-          }
-
-          const isHome =
-            match.homeClub === "WVL109" &&
-            isTeamLetterMatch(match.homeTeam, teamLetter);
-          const opponentRaw = isHome ? match.awayTeam : match.homeTeam;
-          const normalized = normalizeTeamName(opponentRaw);
-          return normalized || null;
-        }
-
-        function formatOrdinal(numericValue) {
-          const n = Number.parseInt(numericValue, 10);
-          if (!Number.isFinite(n)) {
-            return "";
-          }
-
-          return n === 1 ? "1ste" : `${n}de`;
-        }
-
-        function formatDivisionName(divisionName) {
-          const trimmed = String(divisionName || "").trim();
-          if (!trimmed) {
-            return "";
-          }
-
-          const normalized = trimmed
-            .replace(/[\u2013\u2014]/g, "-")
-            .replace(/\s*-\s*/g, " - ")
-            .replace(/\s+/g, " ")
-            .trim();
-
-          if (/^regionvttl$/i.test(normalized)) {
-            return "Landelijke";
-          }
-
-          const reeksMatch = normalized.match(/reeks\s*([a-z])/i);
-          const afdelingMatch = normalized.match(/afdeling\s*(\d+)\s*([a-z])/i);
-
-          if (reeksMatch && /regionvttl/i.test(normalized)) {
-            return `Landelijke ${reeksMatch[1].toUpperCase()}`;
-          }
-
-          if (afdelingMatch) {
-            const level = formatOrdinal(afdelingMatch[1]);
-            const reeksLetter = afdelingMatch[2].toUpperCase();
-
-            if (/nationaal/i.test(normalized)) {
-              return `${level} nationale ${reeksLetter}`;
-            }
-
-            if (/\bprov\b|\bprovinciaal\b|\bprovinciale\b/i.test(normalized)) {
-              return `${level} provinciale ${reeksLetter}`;
-            }
-
-            if (/regionvttl/i.test(normalized)) {
-              return `Landelijke ${reeksLetter}`;
-            }
-          }
-
-          return normalized;
-        }
-
-        function getUpcomingWeekMatches(matches) {
-          const now = new Date();
-          const reference = new Date(now);
-
-          const candidates = dedupeMatches(matches)
-            .map((match) => ({
-              ...match,
-              parsedDate: parseApiDate(match.date),
-              completed:
-                String(match.isCompleted).toLowerCase() === "true" ||
-                String(match.isCompleted) === "1",
-            }))
-            .filter((match) => match.parsedDate)
-            .sort((a, b) => a.parsedDate - b.parsedDate);
-
-          const recentMatches = candidates.filter(
-            (match) => match.parsedDate <= reference,
-          );
-          const mostRecentMatch = recentMatches[recentMatches.length - 1];
-
-          if (mostRecentMatch) {
-            const daysDiff =
-              (reference - mostRecentMatch.parsedDate) / (1000 * 60 * 60 * 24);
-            if (daysDiff <= 4) {
-              const week = mostRecentMatch.weekName;
-              return candidates.filter((match) => match.weekName === week);
-            }
-          }
-
-          const next = candidates.find(
-            (match) => match.parsedDate >= reference && !match.completed,
-          );
-          if (!next) {
-            return [];
-          }
-
-          const week = next.weekName;
-          return candidates
-            .filter((match) => match.weekName === week)
-            .sort((a, b) => a.parsedDate - b.parsedDate);
-        }
-
-        function isTeamLetterMatch(teamName, letter) {
-          const normalized = normalizeTeamName(teamName).toUpperCase();
-          const wanted = letter.toUpperCase();
-          return normalized === wanted || normalized.endsWith(` ${wanted}`);
-        }
-
-        function getErrorMessage(error) {
-          if (error instanceof Error) {
-            return error.message || String(error);
-          }
-
-          try {
-            return JSON.stringify(error);
-          } catch {
-            return String(error);
-          }
-        }
-
-        function getMatchDedupKey(match) {
-          const safeMatch =
-            match && typeof match === "object" ? match : Object.create(null);
-
-          return [
-            String(safeMatch.date || "").trim(),
-            String(safeMatch.homeClub || "").trim(),
-            String(safeMatch.homeTeam || "")
-              .trim()
-              .toUpperCase(),
-            String(safeMatch.awayClub || "").trim(),
-            String(safeMatch.awayTeam || "")
-              .trim()
-              .toUpperCase(),
-          ].join("|");
-        }
-
-        function dedupeMatches(matches) {
-          const seen = new Set();
-          const unique = [];
-
-          for (const match of matches || []) {
-            if (!match || typeof match !== "object") {
-              continue;
-            }
-
-            const key = getMatchDedupKey(match);
-            if (seen.has(key)) {
-              continue;
-            }
-            seen.add(key);
-            unique.push(match);
-          }
-
-          return unique;
-        }
-
-        function getNextTeamMatchdays(matches, teamLetter, count = 5) {
-          const now = new Date();
-          const reference = new Date(now);
-
-          return dedupeMatches(matches)
-            .map((match) => ({
-              ...match,
-              parsedDate: parseApiDate(match.date),
-              completed:
-                String(match.isCompleted).toLowerCase() === "true" ||
-                String(match.isCompleted) === "1",
-            }))
-            .filter((match) => {
-              if (
-                !match.parsedDate ||
-                match.completed ||
-                match.parsedDate < reference
-              ) {
-                return false;
-              }
-
-              const homeIsOurTeam =
-                match.homeClub === "WVL109" &&
-                isTeamLetterMatch(match.homeTeam, teamLetter);
-              const awayIsOurTeam =
-                match.awayClub === "WVL109" &&
-                isTeamLetterMatch(match.awayTeam, teamLetter);
-
-              return homeIsOurTeam || awayIsOurTeam;
-            })
-            .sort((a, b) => a.parsedDate - b.parsedDate)
-            .slice(0, count);
-        }
-
-        function getCurrentTeamMatch(matches, teamLetter) {
-          const now = new Date();
-          const reference = new Date(now);
-
-          const dayOfWeek = reference.getDay();
-          const showRecentMatch = dayOfWeek >= 6 || dayOfWeek <= 2;
-
-          const allTeamMatches = dedupeMatches(matches)
-            .map((match) => ({
-              ...match,
-              parsedDate: parseApiDate(match.date),
-            }))
-            .filter((match) => {
-              if (!match.parsedDate) {
-                return false;
-              }
-
-              const homeIsOurTeam =
-                match.homeClub === "WVL109" &&
-                isTeamLetterMatch(match.homeTeam, teamLetter);
-              const awayIsOurTeam =
-                match.awayClub === "WVL109" &&
-                isTeamLetterMatch(match.awayTeam, teamLetter);
-              return homeIsOurTeam || awayIsOurTeam;
-            });
-
-          if (showRecentMatch) {
-            const pastMatches = allTeamMatches
-              .filter((match) => match.parsedDate <= reference)
-              .sort((a, b) => b.parsedDate - a.parsedDate);
-
-            const recentMatch = pastMatches[0];
-            if (recentMatch) {
-              const daysDiff =
-                (reference - recentMatch.parsedDate) / (1000 * 60 * 60 * 24);
-              if (daysDiff <= 4) {
-                return recentMatch;
-              }
-            }
-          }
-
-          const futureMatches = allTeamMatches
-            .filter((match) => match.parsedDate >= reference)
-            .sort((a, b) => a.parsedDate - b.parsedDate);
-
-          return futureMatches[0] || null;
-        }
-
-        function isMatchCurrentlyActive(match) {
-          if (FORCE_MATCHES_LIVE) return true;
-          if (!match) return false;
-
-          const hScore = Number.parseInt(match.homeScore ?? "0", 10) || 0;
-          const aScore = Number.parseInt(match.awayScore ?? "0", 10) || 0;
-          if (hScore + aScore >= 16) {
-            return false;
-          }
-
-          const rawScore = normalizeScore(match.score);
-          const parts = rawScore
-            .split("-")
-            .map((s) => Number.parseInt(s.trim(), 10) || 0);
-          if (parts.length === 2 && parts[0] + parts[1] >= 16) {
-            return false;
-          }
-
-          const hasPlayers =
-            (match.homePlayers && match.homePlayers.length > 0) ||
-            (match.awayPlayers && match.awayPlayers.length > 0);
-          const isDone =
-            String(match.isCompleted).toLowerCase() === "true" ||
-            String(match.isCompleted) === "1";
-
-          return Boolean(hasPlayers && !isDone);
-        }
-
-        function isSameTeam(name1, name2) {
-          if (!name1 || !name2) return false;
-
-          const a = name1.toLowerCase().trim();
-          const b = name2.toLowerCase().trim();
-
-          if (a === b) return true;
-
-          const partsA = a.split(/\s+/);
-          const partsB = b.split(/\s+/);
-
-          const lastA = partsA[partsA.length - 1];
-          const lastB = partsB[partsB.length - 1];
-
-          if (lastA !== lastB) {
-            return false;
-          }
-
-          const clubA = partsA.slice(0, -1).join(" ");
-          const clubB = partsB.slice(0, -1).join(" ");
-
-          if (!clubA || !clubB) return false;
-
-          if (clubA.includes(clubB) || clubB.includes(clubA)) {
-            return true;
-          }
-
           if (
-            (clubA.includes("and leie") && clubB.includes("lauwe")) ||
-            (clubB.includes("and leie") && clubA.includes("lauwe"))
+            cachedClubTeams &&
+            now - cachedClubTeamsFetchedAt < TEAM_CACHE_MS
           ) {
-            return true;
+            return cachedClubTeams;
           }
-
-          return false;
+          const teams = await fetchTeamsForClub(club);
+          cachedClubTeams = teams;
+          cachedClubTeamsFetchedAt = now;
+          return teams;
         }
 
+        /* ==========================================================================
+           SECTIE 9: HTML RENDERERS (KLASSEMENT, LIVE & NIET-LIVE VIEWS)
+           ========================================================================== */
         function buildRankingHtml(entries, letter, divisionName) {
           const opponentName = currentOpponentByLetter[letter] || null;
 
@@ -1159,14 +1268,19 @@
               const rowStyle = changedToday ? "color-highlight fw-bold" : "";
 
               let teamNameStyle = "";
-              if (!changedToday && isZandvoorde) {
+              if (!changedToday && isZandvoorde)
                 teamNameStyle = "color-zandvoorde fw-bold";
-              }
-              if (isOpponent) {
-                teamNameStyle = `${teamNameStyle} fw-bold`.trim();
-              }
+              if (isOpponent) teamNameStyle = `${teamNameStyle} fw-bold`.trim();
 
-              return `<div class="grid-col-ranking py-1 border-bottom-eee ${rowStyle}"><span class="text-right tabular-nums">${index + 1}.</span><span class="text-left text-ellipsis ${teamNameStyle}">${displayName}</span><span class="text-right tabular-nums">${entry.gw}</span><span class="text-right tabular-nums">${entry.vw}</span><span class="text-right tabular-nums">${entry.dw}</span><span class="text-right tabular-nums">${entry.ff}</span><strong class="text-right tabular-nums">${entry.points}</strong></div>`;
+              return `<div class="grid-col-ranking py-1 border-bottom-eee ${rowStyle}">
+                <span class="text-right tabular-nums">${index + 1}.</span>
+                <span class="text-left text-ellipsis ${teamNameStyle}">${displayName}</span>
+                <span class="text-right tabular-nums">${entry.gw}</span>
+                <span class="text-right tabular-nums">${entry.vw}</span>
+                <span class="text-right tabular-nums">${entry.dw}</span>
+                <span class="text-right tabular-nums">${entry.ff}</span>
+                <strong class="text-right tabular-nums">${entry.points}</strong>
+              </div>`;
             })
             .join("");
 
@@ -1207,23 +1321,19 @@
             : `<div class="pt-4 color-muted text-center">Geen komende matchen</div>`;
 
           const laterTeamMatchdays = nextTeamMatchdays.slice(1, 4);
-
           const nextRowsHtml = laterTeamMatchdays.length
             ? laterTeamMatchdays
                 .map((nextMatch) => {
                   const homeIsOurTeam =
                     nextMatch.homeClub === "WVL109" &&
                     isTeamLetterMatch(nextMatch.homeTeam, teamLetter);
-
                   const opponent = shortenOverviewTeamName(
                     homeIsOurTeam ? nextMatch.awayTeam : nextMatch.homeTeam,
                   );
-
                   const ourLetter = `<span class="color-zandvoorde fw-bold">${teamLetter}</span>`;
                   const pairing = homeIsOurTeam
                     ? `${ourLetter} - ${opponent}`
                     : `${opponent} - ${ourLetter}`;
-
                   return `<div class="grid-col-next py-1 border-bottom-light"><span class="text-left tabular-nums">${formatShortDate(nextMatch.date)}</span><span class="text-left text-ellipsis">${pairing}</span></div>`;
                 })
                 .join("")
@@ -1261,11 +1371,36 @@
             </div>`;
         }
 
-        function renderLiveView(letter, match, matchData) {
+        function getTeamRankingSummary(rankingEntries, teamName) {
+          if (!rankingEntries || !teamName) {
+            return { line1: "- ptn", line2: "-M (0-0-0)" };
+          }
+
+          const index = rankingEntries.findIndex((entry) =>
+            isSameTeam(entry.teamName, teamName),
+          );
+
+          if (index === -1) {
+            return { line1: "- ptn", line2: "-M (0-0-0)" };
+          }
+
+          const entry = rankingEntries[index];
+          const pos = index + 1;
+          const gw = Number.parseInt(entry.gw ?? "0", 10) || 0;
+          const vw = Number.parseInt(entry.vw ?? "0", 10) || 0;
+          const dw = Number.parseInt(entry.dw ?? "0", 10) || 0;
+          const totalMatches = gw + vw + dw;
+
+          return {
+            line1: `${pos}e (${entry.points} ptn)`,
+            line2: `${totalMatches}M (${gw}W-${vw}V-${dw}G)`,
+          };
+        }
+
+        function renderLiveView(letter, match, matchData, rankingData) {
           const isHome =
             match?.homeClub === "WVL109" &&
             isTeamLetterMatch(match?.homeTeam || "", letter);
-
           const rawOpponent = isHome ? match?.awayTeam : match?.homeTeam;
           const opponent = rawOpponent
             ? normalizeTeamName(rawOpponent)
@@ -1275,6 +1410,26 @@
             ? `<span class="color-zandvoorde fw-bold">${letter}</span> - ${opponent}`
             : `${opponent} - <span class="color-zandvoorde fw-bold">${letter}</span>`;
 
+          // --- STAND INFORMATIE BEPALEN ---
+          const rankingEntries = rankingData?.entries || [];
+          const homeTeamName = isHome
+            ? match?.homeTeam || `Zandvoorde ${letter}`
+            : opponent;
+          const awayTeamName = isHome
+            ? opponent
+            : match?.awayTeam || `Zandvoorde ${letter}`;
+
+          const homeStand = getTeamRankingSummary(rankingEntries, homeTeamName);
+          const awayStand = getTeamRankingSummary(rankingEntries, awayTeamName);
+
+          const homeColorClass = isHome
+            ? "color-zandvoorde fw-bold"
+            : "fw-bold";
+          const awayColorClass = !isHome
+            ? "color-zandvoorde fw-bold"
+            : "fw-bold";
+
+          // --- 1. SPELERS RIJEN EERST AANMAKEN (VOORDAT ZE IN PART1 WORDEN GEBRUIKT) ---
           const ourPlayers =
             (isHome ? match?.homePlayers : match?.awayPlayers) || [];
           const oppPlayers =
@@ -1308,26 +1463,48 @@
 
           const homeRows = buildRows(isHome ? ourPlayers : oppPlayers, true);
           const awayRows = buildRows(isHome ? oppPlayers : ourPlayers, false);
-
           const columnTemplate = isHome ? "58% 42%" : "42% 58%";
-
           const totalScore = match?.detailsCreated
             ? `${match.homeScore}-${match.awayScore}`
             : normalizeScore(match?.score);
 
+          // --- 2. DEEL 1 HTML SAMENSTELLEN ---
           const part1Html = `
-            <div class="part-players" style="font-size:0.72em;line-height:1.2;">
+            <div class="part-players" style="font-size:1.1em;line-height:1.2;">
               <div class="live-header">
                 <span class="live-badge">LIVE</span>
                 <span class="text-ellipsis fw-bold" style="font-size:1.15em;">${title}</span>
                 <span class="fw-bold tabular-nums" style="font-size:1.25em;">${totalScore}</span>
               </div>
               <div style="display:grid;grid-template-columns:${columnTemplate};column-gap:4px;margin-top:2px;">
-                <div style="border-right:1px solid #ddd;padding-right:4px;">${homeRows}</div>
-                <div style="padding-left:4px;">${awayRows}</div>
+                <div style="border-right:1px solid #ddd;padding-right:4px;">
+                  <div class="border-bottom-eee" style="font-size:0.7em;line-height:1.15;padding-bottom:2px;margin-bottom:3px;min-height:2.3em;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                      <span class="color-muted">Stand:</span>
+                      <span class="${homeColorClass} tabular-nums">${homeStand.line1}</span>
+                    </div>
+                    <div class="text-right tabular-nums color-muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      ${homeStand.line2}
+                    </div>
+                  </div>
+                  ${homeRows}
+                </div>
+                <div style="padding-left:4px;">
+                  <div class="border-bottom-eee" style="font-size:0.7em;line-height:1.15;padding-bottom:2px;margin-bottom:3px;min-height:2.3em;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                      <span class="color-muted">Stand:</span>
+                      <span class="${awayColorClass} tabular-nums">${awayStand.line1}</span>
+                    </div>
+                    <div class="text-right tabular-nums color-muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      ${awayStand.line2}
+                    </div>
+                  </div>
+                  ${awayRows}
+                </div>
               </div>
             </div>`;
 
+          // --- 3. DEEL 2 HTML (ENKELMATCHEN) ---
           let singlesColumnsHtml = "";
           for (let col = 0; col < 4; col++) {
             let colRowsHtml = "";
@@ -1351,14 +1528,31 @@
                 const oppPos = isHome
                   ? single.awayPlayerIndex
                   : single.homePlayerIndex;
-                const score = isHome
-                  ? `${single.homeSetCount}-${single.awaySetCount}`
-                  : `${single.awaySetCount}-${single.homeSetCount}`;
+
+                const ourSets =
+                  Number(isHome ? single.homeSetCount : single.awaySetCount) ||
+                  0;
+                const oppSets =
+                  Number(isHome ? single.awaySetCount : single.homeSetCount) ||
+                  0;
+                const score = `${ourSets}-${oppSets}`;
+
+                let scoreClasses = [];
+                if (ourSets > 0 || oppSets > 0) {
+                  const isWin = ourSets >= oppSets;
+                  scoreClasses.push(isWin ? "score-win" : "score-loss");
+
+                  if (isHighlighted) {
+                    scoreClasses.push(
+                      isWin ? "score-highlight-win" : "score-highlight-loss",
+                    );
+                  }
+                }
 
                 colRowsHtml += `
-                  <div class="singles-row-item ${rowStyle}">
+                  <div class="singles-row-item">
                     <span class="tabular-nums fw-bold" style="font-size:1.05em;">${ourPos}-${oppPos}</span>
-                    <span class="text-right tabular-nums ws-nowrap" style="font-size:1.05em;">${score}</span>
+                    <span class="text-right tabular-nums ws-nowrap ${scoreClasses.join(" ")}" style="font-size:1.05em;">${score}</span>
                   </div>`;
               }
             }
@@ -1366,10 +1560,11 @@
           }
 
           const part2Html = `
-            <div class="part-singles" style="font-size:0.92em;font-weight:600;display:flex;align-items:center;">
+            <div class="part-singles" style="font-size:1em;font-weight:600;display:flex;align-items:center;">
               <div class="singles-4col-container">${singlesColumnsHtml}</div>
             </div>`;
 
+          // --- 4. DEEL 3 HTML (NEVENMATCHEN) ---
           const otherMatches = (matchData?.upcomingMatches || []).filter(
             (m) =>
               !match ||
@@ -1401,7 +1596,7 @@
             .join("");
 
           const part3Html = `
-            <div class="part-other-matches" style="font-size:0.72em;">
+            <div class="part-other-matches" style="font-size:1em;">
               <div class="text-center fw-bold border-bottom" style="font-size:0.85em;padding-bottom:1px;margin-bottom:1px;">Reeks Tussenstanden</div>
               <div style="display:flex;flex-direction:column;justify-content:space-between;height:100%;">${otherMatchesHtml}${placeholderRows}</div>
             </div>`;
@@ -1423,16 +1618,9 @@
           const match = matchData?.currentMatch;
           const liveActive = isMatchCurrentlyActive(match);
 
-          if (!liveActive) {
-            target.innerHTML = renderNonLiveView(
-              letter,
-              match,
-              matchData,
-              rankingData,
-            );
-          } else {
-            target.innerHTML = renderLiveView(letter, match, matchData);
-          }
+          target.innerHTML = !liveActive
+            ? renderNonLiveView(letter, match, matchData, rankingData)
+            : renderLiveView(letter, match, matchData, rankingData);
         }
 
         function renderBlockError(letter, message) {
@@ -1441,21 +1629,309 @@
           target.innerHTML = `<div style="text-align:center;font-size:0.8em;padding:6px;color:#b00020;">${message}</div>`;
         }
 
-        async function fetchTeamsForClubCached(club) {
-          const now = Date.now();
-          if (
-            cachedClubTeams &&
-            now - cachedClubTeamsFetchedAt < TEAM_CACHE_MS
-          ) {
-            return cachedClubTeams;
-          }
+        /* ==========================================================================
+          MOCK DATA VOOR TESTDOELEINDEN
+          ========================================================================== */
+        /*const MOCK_RANKING_DATA = [
+          {
+            teamName: "TTC Zandvoorde A",
+            gw: "14",
+            vw: "1",
+            dw: "1",
+            ff: "0",
+            points: "45",
+          },
+          {
+            teamName: "TTC Lauwe A",
+            gw: "12",
+            vw: "3",
+            dw: "1",
+            ff: "0",
+            points: "41",
+          },
+          {
+            teamName: "TTC Roeselare A",
+            gw: "11",
+            vw: "4",
+            dw: "1",
+            ff: "0",
+            points: "39",
+          },
+          {
+            teamName: "TTC Sobeka A",
+            gw: "9",
+            vw: "5",
+            dw: "2",
+            ff: "0",
+            points: "36",
+          },
+          {
+            teamName: "TTC Meulebeke B",
+            gw: "8",
+            vw: "7",
+            dw: "1",
+            ff: "0",
+            points: "33",
+          },
+          {
+            teamName: "TTC Brugge A",
+            gw: "7",
+            vw: "7",
+            dw: "2",
+            ff: "0",
+            points: "32",
+          },
+          {
+            teamName: "TTC Houthulst A",
+            gw: "6",
+            vw: "8",
+            dw: "2",
+            ff: "0",
+            points: "30",
+          },
+          {
+            teamName: "TTC Gullegem C",
+            gw: "5",
+            vw: "9",
+            dw: "2",
+            ff: "0",
+            points: "28",
+          },
+          {
+            teamName: "TTC Ieper B",
+            gw: "4",
+            vw: "10",
+            dw: "2",
+            ff: "0",
+            points: "26",
+          },
+          {
+            teamName: "TTC Wenduine A",
+            gw: "3",
+            vw: "11",
+            dw: "2",
+            ff: "0",
+            points: "24",
+          },
+          {
+            teamName: "TTC Oostende A",
+            gw: "2",
+            vw: "13",
+            dw: "1",
+            ff: "0",
+            points: "21",
+          },
+          {
+            teamName: "TTC Torhout B",
+            gw: "1",
+            vw: "14",
+            dw: "1",
+            ff: "0",
+            points: "19",
+          },
+        ];
 
-          const teams = await fetchTeamsForClub(club);
-          cachedClubTeams = teams;
-          cachedClubTeamsFetchedAt = now;
-          return teams;
+        const MOCK_LIVE_MATCH = {
+          date: "2026-10-09",
+          homeClub: "WVL109",
+          homeTeam: "Zandvoorde A",
+          awayClub: "WVL050",
+          awayTeam: "Lauwe A",
+          score: "5-3",
+          isCompleted: "false",
+          detailsCreated: true,
+          homeScore: "5",
+          awayScore: "3",
+          homePlayers: [
+            {
+              position: 1,
+              firstName: "Cedric",
+              ranking: "B2",
+              victoryCount: 2,
+              isForfeited: false,
+            },
+            {
+              position: 2,
+              firstName: "Dieter",
+              ranking: "B4",
+              victoryCount: 1,
+              isForfeited: false,
+            },
+            {
+              position: 3,
+              firstName: "Maxime",
+              ranking: "B6",
+              victoryCount: 1,
+              isForfeited: false,
+            },
+            {
+              position: 4,
+              firstName: "Gilles",
+              ranking: "C0",
+              victoryCount: 1,
+              isForfeited: false,
+            },
+          ],
+          awayPlayers: [
+            {
+              position: 1,
+              firstName: "Thomas",
+              ranking: "B2",
+              victoryCount: 1,
+              isForfeited: false,
+            },
+            {
+              position: 2,
+              firstName: "Lucas",
+              ranking: "B4",
+              victoryCount: 1,
+              isForfeited: false,
+            },
+            {
+              position: 3,
+              firstName: "Bram",
+              ranking: "B6",
+              victoryCount: 1,
+              isForfeited: false,
+            },
+            {
+              position: 4,
+              firstName: "Stijn",
+              ranking: "C0",
+              victoryCount: 0,
+              isForfeited: false,
+            },
+          ],
+          individualMatches: [
+            {
+              position: 1,
+              homePlayerIndex: 1,
+              awayPlayerIndex: 2,
+              homeSetCount: "3",
+              awaySetCount: "1",
+            },
+            {
+              position: 2,
+              homePlayerIndex: 2,
+              awayPlayerIndex: 1,
+              homeSetCount: "1",
+              awaySetCount: "3",
+            },
+            {
+              position: 3,
+              homePlayerIndex: 3,
+              awayPlayerIndex: 4,
+              homeSetCount: "3",
+              awaySetCount: "0",
+            },
+            {
+              position: 4,
+              homePlayerIndex: 4,
+              awayPlayerIndex: 3,
+              homeSetCount: "2",
+              awaySetCount: "3",
+            },
+            {
+              position: 5,
+              homePlayerIndex: 1,
+              awayPlayerIndex: 1,
+              homeSetCount: "3",
+              awaySetCount: "2",
+            },
+            {
+              position: 6,
+              homePlayerIndex: 2,
+              awayPlayerIndex: 2,
+              homeSetCount: "3",
+              awaySetCount: "1",
+            },
+            {
+              position: 7,
+              homePlayerIndex: 3,
+              awayPlayerIndex: 3,
+              homeSetCount: "0",
+              awaySetCount: "3",
+            },
+            {
+              position: 8,
+              homePlayerIndex: 4,
+              awayPlayerIndex: 4,
+              homeSetCount: "3",
+              awaySetCount: "0",
+            },
+          ],
+        };
+
+        const MOCK_OTHER_MATCHES = [
+          { homeTeam: "Roeselare A", awayTeam: "Sobeka A", score: "4-4" },
+          { homeTeam: "Brugge A", awayTeam: "Meulebeke B", score: "2-6" },
+          { homeTeam: "Houthulst A", awayTeam: "Gullegem C", score: "5-3" },
+          { homeTeam: "Wenduine A", awayTeam: "Torhout B", score: "1-7" },
+        ];
+
+        const MOCK_UPCOMING_MATCHDAYS = [
+          {
+            date: "2026-10-16",
+            homeClub: "WVL050",
+            homeTeam: "Lauwe A",
+            awayClub: "WVL109",
+            awayTeam: "Zandvoorde A",
+          },
+          {
+            date: "2026-10-23",
+            homeClub: "WVL109",
+            homeTeam: "Zandvoorde A",
+            awayClub: "WVL022",
+            awayTeam: "Sobeka A",
+          },
+          {
+            date: "2026-11-06",
+            homeClub: "WVL010",
+            homeTeam: "Brugge A",
+            awayClub: "WVL109",
+            awayTeam: "Zandvoorde A",
+          },
+        ];
+        */
+        /* ==========================================================================
+          AANGEPASTE FUNCTIES (VERVANG JE BESTAANDE loadStandings EN loadMatches)
+          ========================================================================== */
+        async function loadStandings() {
+          TEAMS_LIST.forEach((letter) => {
+            updateStandingsHighlightState(letter, MOCK_RANKING_DATA);
+            lastRankingByLetter[letter] = {
+              entries: MOCK_RANKING_DATA,
+              divisionName: `1ste provinciale ${letter}`,
+            };
+            renderTeamCell(letter);
+          });
         }
 
+        async function loadMatches() {
+          TEAMS_LIST.forEach((letter) => {
+            const isLiveTeam = letter === "A" || letter === "B"; // Bv. enkel A en B live tonen
+
+            const result = {
+              letter,
+              status: "ok",
+              currentMatch: isLiveTeam ? MOCK_LIVE_MATCH : null,
+              upcomingMatches: MOCK_OTHER_MATCHES,
+              nextTeamMatchdays: MOCK_UPCOMING_MATCHDAYS,
+            };
+
+            lastMatchesDataByLetter[letter] = result;
+            if (isLiveTeam) {
+              updateSinglesHighlightState(letter, result.currentMatch);
+              currentOpponentByLetter[letter] = "Lauwe A";
+            }
+
+            renderTeamCell(letter);
+          });
+        }
+
+        /* ==========================================================================
+           SECTIE 10: DATA OPHALEN & VERVERSINGSCYCLUS
+           ========================================================================== */
         async function loadStandings() {
           try {
             const teams = await fetchTeamsForClubCached("WVL109");
@@ -1469,9 +1945,7 @@
                       entry.divisionCategory === "37",
                   ) || teams.find((entry) => entry.teamName === letter);
 
-                if (!team?.divisionId) {
-                  return { letter, status: "missing" };
-                }
+                if (!team?.divisionId) return { letter, status: "missing" };
 
                 try {
                   const ranking = await fetchDivisionRanking(team.divisionId);
@@ -1499,7 +1973,6 @@
                 );
                 continue;
               }
-
               if (result.status === "error") {
                 renderBlockError(
                   result.letter,
@@ -1513,11 +1986,10 @@
                 entries: result.ranking,
                 divisionName: result.divisionName,
               };
-
               renderTeamCell(result.letter);
             }
           } catch (error) {
-            console.error("Error loading standings:", error);
+            console.error("Fout bij laden van klassement:", error);
           }
         }
 
@@ -1535,9 +2007,7 @@
                       entry.divisionCategory === "37",
                   ) || teams.find((entry) => entry.teamName === letter);
 
-                if (!team?.divisionId) {
-                  return { letter, status: "missing" };
-                }
+                if (!team?.divisionId) return { letter, status: "missing" };
 
                 try {
                   const matches = await fetchDivisionMatches(
@@ -1579,7 +2049,6 @@
                 );
                 continue;
               }
-
               if (result.status === "error") {
                 renderBlockError(
                   result.letter,
@@ -1600,7 +2069,7 @@
               renderTeamCell(result.letter);
             }
           } catch (error) {
-            console.error("Error loading matches:", error);
+            console.error("Fout bij laden van matchen:", error);
           }
         }
 
@@ -1632,67 +2101,9 @@
           );
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
-          loadStandingsHighlightState();
-          if (standingsRefreshTimeoutId) {
-            clearTimeout(standingsRefreshTimeoutId);
-          }
-          if (matchesRefreshIntervalId) {
-            clearInterval(matchesRefreshIntervalId);
-          }
-
-          refreshStandingsAndReschedule();
-          refreshMatches();
-          matchesRefreshIntervalId = setInterval(
-            refreshMatches,
-            MATCHES_POLL_INTERVAL_MS,
-          );
-        });
-      </script>
-
-      <div class="control-buttons">
-        <a
-          class="control-btn"
-          href="https://www.ttczandvoorde.be"
-          title="Terug naar website"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-          </svg>
-        </a>
-        <button class="control-btn" id="fullscreenBtn" title="Fullscreen (F11)">
-          <svg
-            id="fullscreenIcon"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
-            />
-          </svg>
-          <svg
-            id="exitFullscreenIcon"
-            style="display: none"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <script>
-        const fullscreenBtn = rootEl?.querySelector("#fullscreenBtn");
-        const fullscreenIcon = rootEl?.querySelector("#fullscreenIcon");
-        const exitFullscreenIcon = rootEl?.querySelector("#exitFullscreenIcon");
-        let autoFullscreenAttempted = false;
-        const DESIGN_WIDTH = 1920;
-        const DESIGN_HEIGHT = 1080;
-        const MIN_LAYOUT_SCALE = 0.62;
-        const MAX_LAYOUT_SCALE = 1.15;
-
+        /* ==========================================================================
+           SECTIE 11: SCHAALBEREKENING & FULLSCREEN CONTROLE
+           ========================================================================== */
         function updateLayoutScale() {
           const rect = rootEl?.getBoundingClientRect();
           const width = Math.max(rect?.width || window.innerWidth || 0, 1);
@@ -1711,18 +2122,10 @@
         }
 
         async function requestFullscreenSafe() {
-          if (document.fullscreenElement) {
-            return true;
-          }
-
-          if (!rootEl?.requestFullscreen) {
-            return false;
-          }
-
+          if (document.fullscreenElement) return true;
+          if (!rootEl?.requestFullscreen) return false;
           try {
-            await rootEl.requestFullscreen({
-              navigationUI: "hide",
-            });
+            await rootEl.requestFullscreen({ navigationUI: "hide" });
             return true;
           } catch {
             return false;
@@ -1738,23 +2141,16 @@
               document.removeEventListener("touchstart", tryFromGesture);
             }
           };
-
           document.addEventListener("click", tryFromGesture);
           document.addEventListener("keydown", tryFromGesture);
           document.addEventListener("touchstart", tryFromGesture);
         }
 
         async function tryAutoFullscreenOnce() {
-          if (autoFullscreenAttempted) {
-            return;
-          }
-
+          if (autoFullscreenAttempted) return;
           autoFullscreenAttempted = true;
           const ok = await requestFullscreenSafe();
-
-          if (!ok) {
-            installFullscreenFallbackListeners();
-          }
+          if (!ok) installFullscreenFallbackListeners();
         }
 
         function toggleFullscreen() {
@@ -1773,9 +2169,26 @@
             fullscreenIcon.style.display = "block";
             exitFullscreenIcon.style.display = "none";
           }
-
           updateLayoutScale();
         }
+
+        /* ==========================================================================
+           SECTIE 12: INITIALISATIE & EVENT LISTENERS
+           ========================================================================== */
+        window.addEventListener("DOMContentLoaded", () => {
+          loadStandingsHighlightState();
+
+          if (standingsRefreshTimeoutId)
+            clearTimeout(standingsRefreshTimeoutId);
+          if (matchesRefreshIntervalId) clearInterval(matchesRefreshIntervalId);
+
+          refreshStandingsAndReschedule();
+          refreshMatches();
+          matchesRefreshIntervalId = setInterval(
+            refreshMatches,
+            MATCHES_POLL_INTERVAL_MS,
+          );
+        });
 
         fullscreenBtn?.addEventListener("click", toggleFullscreen);
         document.addEventListener("fullscreenchange", updateFullscreenIcon);
